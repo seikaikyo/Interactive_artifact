@@ -35,8 +35,8 @@ body {
 .dashboard {
     padding: 20px;
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    grid-template-rows: repeat(2, 1fr);
+    grid-template-columns: repeat(6, 1fr);
+    grid-template-rows: repeat(3, 1fr);
     gap: 15px;
     height: calc(100vh - 80px);
     max-width: 1920px;
@@ -178,5 +178,416 @@ body {
         grid-template-rows: repeat(5, 1fr);
         gap: 10px;
         padding: 10px;
+    }
+}
+
+/* AI 功能樣式 - ver2.0 */
+.ai-widget {
+    border: 2px solid rgba(0, 212, 255, 0.3);
+    background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(255, 255, 255, 0.05));
+    position: relative;
+    overflow: visible;
+}
+
+.ai-widget::before {
+    content: '🤖';
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background: #00d4ff;
+    color: #000;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    box-shadow: 0 2px 8px rgba(0, 212, 255, 0.4);
+}
+
+.ai-status {
+    font-size: 10px;
+    padding: 2px 6px;
+    border-radius: 10px;
+    margin-left: 8px;
+}
+
+.ai-status.online {
+    background: rgba(76, 175, 80, 0.2);
+    color: #4CAF50;
+    border: 1px solid #4CAF50;
+}
+
+/* AI 洞察樣式 */
+.ai-insight-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    margin-bottom: 10px;
+    border-left: 3px solid #00d4ff;
+}
+
+.ai-insight-item.loading {
+    border-left-color: #FF9800;
+    animation: pulse 2s infinite;
+}
+
+.insight-icon {
+    font-size: 20px;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 212, 255, 0.2);
+    border-radius: 50%;
+}
+
+.insight-content {
+    flex: 1;
+}
+
+.insight-title {
+    font-weight: 600;
+    font-size: 14px;
+    color: #e8f4ff;
+    margin-bottom: 4px;
+}
+
+.insight-description {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 6px;
+    line-height: 1.4;
+}
+
+.insight-recommendation {
+    font-size: 11px;
+    color: #00d4ff;
+    margin-bottom: 4px;
+}
+
+.insight-confidence {
+    font-size: 10px;
+    color: #4CAF50;
+    font-weight: 500;
+}
+
+/* AI 摘要樣式 */
+.ai-summary {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 15px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.summary-item {
+    text-align: center;
+}
+
+.summary-label {
+    display: block;
+    font-size: 10px;
+    color: rgba(255, 255, 255, 0.6);
+    margin-bottom: 2px;
+}
+
+.summary-value {
+    font-size: 14px;
+    font-weight: 600;
+    color: #00d4ff;
+}
+
+/* AI 建議樣式 */
+.recommendation-count {
+    background: #FF6B6B;
+    color: white;
+    padding: 2px 6px;
+    border-radius: 10px;
+    font-size: 10px;
+    margin-left: 8px;
+}
+
+.recommendation-item {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    padding: 10px;
+    margin-bottom: 8px;
+    border-left: 3px solid #4CAF50;
+}
+
+.recommendation-item.priority-high {
+    border-left-color: #f44336;
+}
+
+.recommendation-item.priority-medium {
+    border-left-color: #FF9800;
+}
+
+.rec-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+}
+
+.rec-title {
+    font-weight: 600;
+    font-size: 12px;
+    color: #e8f4ff;
+}
+
+.rec-priority {
+    font-size: 9px;
+    padding: 2px 6px;
+    border-radius: 8px;
+    text-transform: uppercase;
+}
+
+.rec-priority.high {
+    background: rgba(244, 67, 54, 0.2);
+    color: #f44336;
+}
+
+.rec-priority.medium {
+    background: rgba(255, 152, 0, 0.2);
+    color: #FF9800;
+}
+
+.rec-priority.low {
+    background: rgba(76, 175, 80, 0.2);
+    color: #4CAF50;
+}
+
+.rec-description, .rec-impact, .rec-action {
+    font-size: 11px;
+    margin-bottom: 4px;
+    line-height: 1.3;
+}
+
+.rec-description {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.rec-impact {
+    color: #4CAF50;
+}
+
+.rec-action {
+    color: #00d4ff;
+}
+
+/* AI 按鈕樣式 */
+.ai-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.ai-btn {
+    flex: 1;
+    padding: 6px 12px;
+    background: linear-gradient(45deg, #00d4ff, #0099cc);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.ai-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 212, 255, 0.3);
+}
+
+.ai-btn.secondary {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* 健康度監控樣式 */
+.health-metrics {
+    margin: 15px 0;
+}
+
+.health-item {
+    margin-bottom: 12px;
+}
+
+.health-label {
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 4px;
+}
+
+.health-bar {
+    width: 100%;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 3px;
+    overflow: hidden;
+    margin-bottom: 4px;
+}
+
+.health-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 1s ease;
+}
+
+.health-fill.good {
+    background: linear-gradient(90deg, #4CAF50, #81C784);
+}
+
+.health-fill.warning {
+    background: linear-gradient(90deg, #FF9800, #FFB74D);
+}
+
+.health-fill.critical {
+    background: linear-gradient(90deg, #f44336, #E57373);
+}
+
+.health-fill.efficiency {
+    background: linear-gradient(90deg, #00d4ff, #64B5F6);
+}
+
+.health-value {
+    font-size: 10px;
+    color: #00d4ff;
+    font-weight: 600;
+}
+
+/* 狀態指示器 */
+.health-indicators {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.indicator {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 9px;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.indicator-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #666;
+    transition: background 0.3s ease;
+}
+
+.indicator.active .indicator-dot {
+    background: #4CAF50;
+    box-shadow: 0 0 6px #4CAF50;
+}
+
+.indicator.inactive .indicator-dot {
+    background: #f44336;
+}
+
+/* 預測維護樣式 */
+.prediction-item {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    padding: 10px;
+    margin-bottom: 8px;
+    border-left: 3px solid #4CAF50;
+}
+
+.prediction-item.risk-high {
+    border-left-color: #f44336;
+    background: rgba(244, 67, 54, 0.1);
+}
+
+.prediction-item.risk-medium {
+    border-left-color: #FF9800;
+    background: rgba(255, 152, 0, 0.1);
+}
+
+.equipment-name {
+    font-weight: 600;
+    font-size: 12px;
+    color: #e8f4ff;
+    margin-bottom: 4px;
+}
+
+.prediction-status {
+    font-size: 11px;
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 4px;
+}
+
+.prediction-status.good {
+    color: #4CAF50;
+}
+
+.probability {
+    font-size: 10px;
+    color: #FF9800;
+    margin-bottom: 4px;
+}
+
+.recommendation {
+    font-size: 10px;
+    color: #00d4ff;
+    line-height: 1.3;
+}
+
+.maintenance-summary {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 12px;
+    padding-top: 8px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.summary-metric {
+    text-align: center;
+}
+
+.metric-label {
+    display: block;
+    font-size: 9px;
+    color: rgba(255, 255, 255, 0.6);
+    margin-bottom: 2px;
+}
+
+.metric-value {
+    font-size: 12px;
+    font-weight: 600;
+    color: #00d4ff;
+}
+
+/* 動畫效果 */
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+}
+
+@keyframes ai-glow {
+    0%, 100% { box-shadow: 0 0 10px rgba(0, 212, 255, 0.3); }
+    50% { box-shadow: 0 0 20px rgba(0, 212, 255, 0.6); }
+}
+
+.ai-widget:hover {
+    animation: ai-glow 2s infinite;
+}
+
+/* 響應式調整 */
+@media (max-width: 1200px) {
+    .dashboard {
+        grid-template-columns: repeat(3, 1fr);
+        grid-template-rows: repeat(5, 1fr);
     }
 }

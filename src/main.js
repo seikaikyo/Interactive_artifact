@@ -1,5 +1,7 @@
 import Chart from 'chart.js/auto';
 import './style.css';
+import AIEngine from './ai-engine.js';
+import AIComponents from './ai-components.js';
 
 // 將 HTML 內容插入到 app div
 document.querySelector('#app').innerHTML = `
@@ -385,3 +387,29 @@ setInterval(() => {
         oeeValue.textContent = newValue.toFixed(1) + '%';
     }
 }, 5000);
+
+// 🤖 AI 引擎初始化 - ver2.0 智慧化升級
+console.log('🚀 啟動 WISE-IOT Dashboard ver2.0 - AI 智慧化');
+
+// 初始化 AI 引擎
+const aiEngine = new AIEngine();
+const aiComponents = new AIComponents();
+
+// 等待 DOM 完全載入後初始化 AI 功能
+setTimeout(() => {
+    console.log('🤖 正在初始化 AI 引擎...');
+
+    // 初始化 AI 組件
+    aiComponents.initialize(aiEngine);
+
+    // 啟動 AI 引擎
+    aiEngine.initialize();
+
+    // 將 AI 組件暴露到全局，供按鈕點擊使用
+    window.aiComponents = aiComponents;
+    window.aiEngine = aiEngine;
+
+    console.log('✅ AI 引擎已成功啟動');
+    console.log('📊 可用功能：預測性維護、品質智慧分析、異常檢測、製程最佳化');
+
+}, 2000); // 等待2秒確保所有圖表載入完成

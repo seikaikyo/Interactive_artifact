@@ -230,8 +230,12 @@ document.querySelector('#app').innerHTML = `
         </div>
     </div>
 
-    <div style="position: fixed; bottom: 10px; right: 10px; font-size: 12px; opacity: 0.7; background: rgba(0,0,0,0.5); padding: 5px 10px; border-radius: 5px;">
-        作者：選我正解
+    <div style="position: fixed; bottom: 10px; right: 10px; font-size: 11px; opacity: 0.8; background: rgba(0,0,0,0.7); padding: 8px 12px; border-radius: 8px; border: 1px solid rgba(0, 212, 255, 0.3);">
+        <div style="color: #00d4ff; font-weight: 600; margin-bottom: 2px;">鈺祥企業柳營再生戰情中心 v2.0</div>
+        <div style="color: rgba(255,255,255,0.9); font-size: 9px;">作者：選我正解</div>
+        <div style="color: rgba(255,255,255,0.6); font-size: 8px; margin-top: 2px;">
+            Tech Stack: Vite + Chart.js + AI Engine (JS + Python)
+        </div>
     </div>
 `;
 

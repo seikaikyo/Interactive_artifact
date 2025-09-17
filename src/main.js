@@ -9,51 +9,51 @@ document.querySelector('#app').innerHTML = `
     </div>
 
     <div class="dashboard">
-        <!-- 機台OEE -->
+        <!-- 再生製程OEE -->
         <div class="widget">
-            <div class="widget-title">機台OEE (FPY/RTY)</div>
+            <div class="widget-title">再生製程效率 (FPY/RTY)</div>
             <div class="kpi-grid">
                 <div class="kpi-item">
-                    <div class="metric-label">First Pass Yield</div>
-                    <div class="metric-value">94.2%</div>
+                    <div class="metric-label">濾網再生良率</div>
+                    <div class="metric-value">92.8%</div>
                     <div class="progress-bar">
-                        <div class="progress-fill" style="width: 94.2%"></div>
+                        <div class="progress-fill" style="width: 92.8%"></div>
                     </div>
                 </div>
                 <div class="kpi-item">
-                    <div class="metric-label">Roll Throughput Yield</div>
-                    <div class="metric-value">89.7%</div>
+                    <div class="metric-label">製程通過率</div>
+                    <div class="metric-value">87.3%</div>
                     <div class="progress-bar">
-                        <div class="progress-fill" style="width: 89.7%"></div>
+                        <div class="progress-fill" style="width: 87.3%"></div>
                     </div>
                 </div>
             </div>
             <div style="margin-top: 15px;">
-                <div class="metric-label">整體設備效率 (OEE)</div>
-                <div class="metric-value">85.4% <span class="trend-indicator trend-up">↗</span></div>
+                <div class="metric-label">整體再生效率 (OEE)</div>
+                <div class="metric-value">83.6% <span class="trend-indicator trend-up">↗</span></div>
             </div>
         </div>
 
-        <!-- 產出 vs 計畫 -->
+        <!-- 再生產能 vs 計畫 -->
         <div class="widget">
-            <div class="widget-title">產出 vs 計畫</div>
+            <div class="widget-title">再生產能 vs 計畫</div>
             <div class="chart-container">
                 <canvas id="productionChart"></canvas>
             </div>
             <div style="margin-top: 10px;">
-                <div class="metric-label">WIP數量</div>
-                <div class="metric-value">2,847 <span class="status-good">件</span></div>
-                <div class="metric-label">目標達成率: 102.3%</div>
+                <div class="metric-label">在製濾網數量</div>
+                <div class="metric-value">1,432 <span class="status-good">片</span></div>
+                <div class="metric-label">日產能達成率: 98.7%</div>
             </div>
         </div>
 
-        <!-- Top 瓶頸排行榜 -->
+        <!-- 再生製程瓶頸分析 -->
         <div class="widget">
-            <div class="widget-title">Top 瓶頸排行榜</div>
+            <div class="widget-title">再生製程瓶頸分析</div>
             <table class="data-table" style="width: 100%;">
                 <thead>
                     <tr>
-                        <th>工站</th>
+                        <th>製程站</th>
                         <th>利用率</th>
                         <th>等候時間</th>
                         <th>滯留%</th>
@@ -62,40 +62,40 @@ document.querySelector('#app').innerHTML = `
                 </thead>
                 <tbody>
                     <tr>
-                        <td>SMT-01</td>
-                        <td class="status-alert">98.7%</td>
-                        <td>45min</td>
-                        <td>23.1%</td>
-                        <td>87</td>
+                        <td>除膠站</td>
+                        <td class="status-alert">96.4%</td>
+                        <td>38min</td>
+                        <td>21.7%</td>
+                        <td>84</td>
                     </tr>
                     <tr>
-                        <td>AOI-03</td>
-                        <td class="status-warning">95.2%</td>
-                        <td>32min</td>
-                        <td>18.5%</td>
-                        <td>79</td>
+                        <td>烘烤爐</td>
+                        <td class="status-warning">93.8%</td>
+                        <td>42min</td>
+                        <td>19.2%</td>
+                        <td>78</td>
                     </tr>
                     <tr>
-                        <td>TEST-02</td>
-                        <td class="status-warning">91.8%</td>
-                        <td>28min</td>
-                        <td>15.2%</td>
-                        <td>72</td>
+                        <td>檢測站</td>
+                        <td class="status-warning">89.5%</td>
+                        <td>25min</td>
+                        <td>14.8%</td>
+                        <td>71</td>
                     </tr>
                 </tbody>
             </table>
         </div>
 
-        <!-- 品質 Pareto -->
+        <!-- 再生不良 Pareto -->
         <div class="widget">
-            <div class="widget-title">品質 Pareto</div>
+            <div class="widget-title">再生不良原因分析</div>
             <div class="chart-container">
                 <canvas id="paretoChart"></canvas>
             </div>
             <div style="margin-top: 10px;">
-                <div class="metric-label">重工率</div>
-                <div class="metric-value status-warning">3.2%</div>
-                <div class="metric-label">較上週 +0.5%</div>
+                <div class="metric-label">重製率</div>
+                <div class="metric-value status-warning">2.8%</div>
+                <div class="metric-label">較上週 -0.3%</div>
             </div>
         </div>
 
@@ -121,38 +121,38 @@ document.querySelector('#app').innerHTML = `
             </div>
         </div>
 
-        <!-- SPC 烘箱關鍵製程 -->
+        <!-- SPC 烘烤爐關鍵製程 -->
         <div class="widget">
-            <div class="widget-title">SPC 烘箱關鍵製程</div>
+            <div class="widget-title">SPC 烘烤爐關鍵製程</div>
             <div class="chart-container">
                 <canvas id="spcChart"></canvas>
             </div>
             <div class="kpi-grid">
                 <div class="kpi-item">
-                    <div class="metric-label">Mitap</div>
-                    <div class="metric-value status-good">1.67</div>
+                    <div class="metric-label">Cpk值</div>
+                    <div class="metric-value status-good">1.73</div>
                 </div>
                 <div class="kpi-item">
-                    <div class="metric-label">壓損</div>
-                    <div class="metric-value status-warning">85 Pa</div>
+                    <div class="metric-label">烘烤溫度</div>
+                    <div class="metric-value status-good">185°C</div>
                 </div>
             </div>
         </div>
 
-        <!-- AOI 缺陷密度 -->
+        <!-- 濾網檢測品質 -->
         <div class="widget">
-            <div class="widget-title">AOI 缺陷密度</div>
+            <div class="widget-title">濾網檢測品質趨勢</div>
             <div class="chart-container">
                 <canvas id="aoiChart"></canvas>
             </div>
             <div class="kpi-grid">
                 <div class="kpi-item">
-                    <div class="metric-label">FP (近7日)</div>
-                    <div class="metric-value status-good">97.8%</div>
+                    <div class="metric-label">檢測精度 (近7日)</div>
+                    <div class="metric-value status-good">98.4%</div>
                 </div>
                 <div class="kpi-item">
-                    <div class="metric-label">FN (近7日)</div>
-                    <div class="metric-value status-good">1.2%</div>
+                    <div class="metric-label">誤判率 (近7日)</div>
+                    <div class="metric-value status-good">0.8%</div>
                 </div>
             </div>
         </div>
@@ -168,60 +168,60 @@ document.querySelector('#app').innerHTML = `
             <div class="metric-label">離峰用電: 892 kW</div>
         </div>
 
-        <!-- 告警牆 -->
+        <!-- 再生製程告警 -->
         <div class="widget">
-            <div class="widget-title">告警牆</div>
+            <div class="widget-title">再生製程告警牆</div>
             <div class="alert-item">
-                <strong>14:23</strong> SMT-01 溫度異常
+                <strong>14:23</strong> 除膠站-02 溶劑濃度異常
             </div>
             <div class="alert-item">
-                <strong>13:45</strong> AOI-03 檢測異常
+                <strong>13:45</strong> 烘烤爐-01 溫度偏差
             </div>
             <div class="alert-item">
-                <strong>12:18</strong> 烘箱-02 壓力警告
+                <strong>12:18</strong> 檢測站-03 光源強度不足
             </div>
             <div class="kpi-grid" style="margin-top: 10px;">
                 <div class="kpi-item">
                     <div class="metric-label">MTTA</div>
-                    <div class="metric-value">4.2min</div>
+                    <div class="metric-value">3.8min</div>
                 </div>
                 <div class="kpi-item">
                     <div class="metric-label">MTTR</div>
-                    <div class="metric-value">15.7min</div>
+                    <div class="metric-value">12.4min</div>
                 </div>
             </div>
         </div>
 
-        <!-- 烘箱細節 -->
+        <!-- 烘烤爐設備狀態 -->
         <div class="widget">
-            <div class="widget-title">烘箱細節</div>
+            <div class="widget-title">烘烤爐設備狀態</div>
             <table class="data-table" style="width: 100%;">
                 <thead>
                     <tr>
-                        <th>烘箱</th>
+                        <th>烘烤爐</th>
                         <th>溫度</th>
-                        <th>壓力</th>
+                        <th>時間</th>
                         <th>狀態</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <td>Oven-01</td>
+                        <td>爐體-01</td>
                         <td>185°C</td>
-                        <td>92 Pa</td>
-                        <td class="status-good">正常</td>
+                        <td>42min</td>
+                        <td class="status-good">運行中</td>
                     </tr>
                     <tr>
-                        <td>Oven-02</td>
-                        <td>182°C</td>
-                        <td>95 Pa</td>
-                        <td class="status-warning">警告</td>
+                        <td>爐體-02</td>
+                        <td>180°C</td>
+                        <td>38min</td>
+                        <td class="status-warning">預熱中</td>
                     </tr>
                     <tr>
-                        <td>Oven-03</td>
-                        <td>187°C</td>
-                        <td>89 Pa</td>
-                        <td class="status-good">正常</td>
+                        <td>爐體-03</td>
+                        <td>188°C</td>
+                        <td>45min</td>
+                        <td class="status-good">運行中</td>
                     </tr>
                 </tbody>
             </table>
@@ -255,19 +255,19 @@ updateTime();
 Chart.defaults.color = 'white';
 Chart.defaults.scale.grid.color = 'rgba(255, 255, 255, 0.1)';
 
-// 產出 vs 計畫圖表
+// 再生產能 vs 計畫圖表
 const productionCtx = document.getElementById('productionChart').getContext('2d');
 new Chart(productionCtx, {
     type: 'bar',
     data: {
         labels: ['週一', '週二', '週三', '週四', '週五'],
         datasets: [{
-            label: '實際產出',
-            data: [850, 920, 880, 950, 890],
+            label: '實際再生量',
+            data: [430, 468, 445, 482, 456],
             backgroundColor: 'rgba(0, 212, 255, 0.7)',
         }, {
-            label: '計畫產出',
-            data: [900, 900, 900, 900, 900],
+            label: '計畫再生量',
+            data: [450, 450, 450, 450, 450],
             type: 'line',
             borderColor: '#FF6B6B',
             backgroundColor: 'transparent',
@@ -285,14 +285,14 @@ new Chart(productionCtx, {
     }
 });
 
-// 品質 Pareto 圖表
+// 再生不良 Pareto 圖表
 const paretoCtx = document.getElementById('paretoChart').getContext('2d');
 new Chart(paretoCtx, {
     type: 'bar',
     data: {
-        labels: ['焊接', '元件', '清潔', '測試', '其他'],
+        labels: ['除膠不完全', '烘烤不均', '污染殘留', '破損裂紋', '其他'],
         datasets: [{
-            data: [45, 28, 15, 8, 4],
+            data: [38, 25, 18, 12, 7],
             backgroundColor: ['#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7']
         }]
     },
@@ -333,17 +333,17 @@ new Chart(spcCtx, {
     }
 });
 
-// AOI 趨勢圖表
+// 濾網檢測品質圖表
 const aoiCtx = document.getElementById('aoiChart').getContext('2d');
 new Chart(aoiCtx, {
     type: 'line',
     data: {
         labels: ['Day1', 'Day2', 'Day3', 'Day4', 'Day5', 'Day6', 'Day7'],
         datasets: [{
-            label: '缺陷密度',
-            data: [0.8, 0.6, 0.9, 0.5, 0.7, 0.4, 0.6],
-            borderColor: '#FF6B6B',
-            backgroundColor: 'rgba(255, 107, 107, 0.1)',
+            label: '檢測精度',
+            data: [98.2, 98.8, 97.9, 98.6, 98.4, 99.1, 98.7],
+            borderColor: '#4CAF50',
+            backgroundColor: 'rgba(76, 175, 80, 0.1)',
             fill: true
         }]
     },

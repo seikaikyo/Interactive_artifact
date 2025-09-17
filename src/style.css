@@ -57,6 +57,30 @@ body {
     overflow: hidden;
 }
 
+.widget-content {
+    flex: 1;
+    overflow-y: auto;
+    margin-bottom: 10px;
+}
+
+.widget-content::-webkit-scrollbar {
+    width: 6px;
+}
+
+.widget-content::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+}
+
+.widget-content::-webkit-scrollbar-thumb {
+    background: rgba(0, 212, 255, 0.5);
+    border-radius: 3px;
+}
+
+.widget-content::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 212, 255, 0.8);
+}
+
 .widget:hover {
     transform: translateY(-2px);
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
@@ -220,35 +244,40 @@ body {
     border: 1px solid #4CAF50;
 }
 
-/* AI 模型信息樣式 */
-.ai-model-info {
+/* AI 模型標籤樣式 */
+.ai-model-badge {
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
     display: flex;
     flex-direction: column;
     align-items: flex-end;
     gap: 2px;
-    margin-top: 4px;
+    z-index: 10;
 }
 
-.model-name {
+.ai-model-badge .model-name {
     font-size: 9px;
     color: #00d4ff;
-    background: rgba(0, 212, 255, 0.1);
+    background: rgba(0, 212, 255, 0.15);
     padding: 2px 6px;
     border-radius: 8px;
-    border: 1px solid rgba(0, 212, 255, 0.3);
+    border: 1px solid rgba(0, 212, 255, 0.4);
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.5px;
+    backdrop-filter: blur(5px);
 }
 
-.tech-stack {
+.ai-model-badge .tech-stack {
     font-size: 8px;
-    color: rgba(255, 255, 255, 0.6);
-    background: rgba(255, 255, 255, 0.05);
+    color: rgba(255, 255, 255, 0.8);
+    background: rgba(0, 0, 0, 0.6);
     padding: 1px 4px;
     border-radius: 6px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
     font-family: 'Monaco', 'Courier New', monospace;
+    backdrop-filter: blur(5px);
 }
 
 /* AI 洞察樣式 */
@@ -643,16 +672,30 @@ body {
 @media (max-width: 768px) {
     .dashboard {
         grid-template-columns: 1fr 1fr;
-        grid-template-rows: repeat(8, 220px);
+        grid-template-rows: repeat(8, 250px);
         gap: 10px;
         padding: 10px;
     }
 
-    .ai-model-info {
-        display: none;
+    .ai-model-badge {
+        position: relative;
+        bottom: auto;
+        right: auto;
+        margin-top: 8px;
+        align-items: flex-start;
+    }
+
+    .ai-model-badge .model-name,
+    .ai-model-badge .tech-stack {
+        font-size: 7px;
+        padding: 1px 3px;
     }
 
     .widget-title {
         font-size: 14px;
+    }
+
+    .widget-content {
+        padding-bottom: 0;
     }
 }

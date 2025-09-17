@@ -43,12 +43,9 @@ class AIComponents {
             <div class="widget-title">
                 🤖 AI 智慧洞察
                 <span class="ai-status online">即時分析中</span>
-                <div class="ai-model-info">
-                    <span class="model-name">GPT-4o</span>
-                    <span class="tech-stack">JavaScript + TensorFlow.js</span>
-                </div>
             </div>
-            <div id="ai-insights-content">
+            <div class="widget-content">
+                <div id="ai-insights-content">
                 <div class="ai-insight-item loading">
                     <div class="insight-icon">🔍</div>
                     <div class="insight-content">
@@ -67,6 +64,12 @@ class AIComponents {
                     <span class="summary-value" id="analysis-count">0</span>
                 </div>
             </div>
+                </div>
+            </div>
+            <div class="ai-model-badge">
+                <span class="model-name">GPT-4o</span>
+                <span class="tech-stack">JavaScript + TensorFlow.js</span>
+            </div>
         `;
         return widget;
     }
@@ -79,12 +82,9 @@ class AIComponents {
             <div class="widget-title">
                 💡 AI 最佳化建議
                 <span class="recommendation-count" id="rec-count">0</span>
-                <div class="ai-model-info">
-                    <span class="model-name">Claude-3.5-Sonnet</span>
-                    <span class="tech-stack">Python + scikit-learn</span>
-                </div>
             </div>
-            <div id="ai-recommendations-content">
+            <div class="widget-content">
+                <div id="ai-recommendations-content">
                 <div class="recommendation-placeholder">
                     等待 AI 分析結果...
                 </div>
@@ -97,6 +97,12 @@ class AIComponents {
                     匯出報告
                 </button>
             </div>
+                </div>
+            </div>
+            <div class="ai-model-badge">
+                <span class="model-name">Claude-3.5-Sonnet</span>
+                <span class="tech-stack">Python + scikit-learn</span>
+            </div>
         `;
         return widget;
     }
@@ -106,14 +112,9 @@ class AIComponents {
         const widget = document.createElement('div');
         widget.className = 'widget ai-widget';
         widget.innerHTML = `
-            <div class="widget-title">
-                📊 AI 系統健康度
-                <div class="ai-model-info">
-                    <span class="model-name">LSTM-AutoEncoder</span>
-                    <span class="tech-stack">PyTorch + ONNX.js</span>
-                </div>
-            </div>
-            <div class="health-metrics">
+            <div class="widget-title">📊 AI 系統健康度</div>
+            <div class="widget-content">
+                <div class="health-metrics">
                 <div class="health-item">
                     <div class="health-label">整體健康度</div>
                     <div class="health-bar">
@@ -143,6 +144,12 @@ class AIComponents {
                     異常檢測
                 </div>
             </div>
+                </div>
+            </div>
+            <div class="ai-model-badge">
+                <span class="model-name">LSTM-AutoEncoder</span>
+                <span class="tech-stack">PyTorch + ONNX.js</span>
+            </div>
         `;
         return widget;
     }
@@ -152,14 +159,9 @@ class AIComponents {
         const widget = document.createElement('div');
         widget.className = 'widget ai-widget';
         widget.innerHTML = `
-            <div class="widget-title">
-                🔧 預測性維護
-                <div class="ai-model-info">
-                    <span class="model-name">XGBoost + Random Forest</span>
-                    <span class="tech-stack">Python + Node.js</span>
-                </div>
-            </div>
-            <div id="maintenance-predictions">
+            <div class="widget-title">🔧 預測性維護</div>
+            <div class="widget-content">
+                <div id="maintenance-predictions">
                 <div class="prediction-item">
                     <div class="equipment-name">系統掃描中...</div>
                     <div class="prediction-status">正在分析設備狀態</div>
@@ -174,6 +176,12 @@ class AIComponents {
                     <span class="metric-label">平均可靠度</span>
                     <span class="metric-value" id="avg-reliability">--</span>
                 </div>
+            </div>
+                </div>
+            </div>
+            <div class="ai-model-badge">
+                <span class="model-name">XGBoost + Random Forest</span>
+                <span class="tech-stack">Python + Node.js</span>
             </div>
         `;
         return widget;

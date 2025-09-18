@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>快速建立測試帳號</title>
+    <style>
+        body {
+            font-family: 'Microsoft JhengHei', Arial, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+            text-align: center;
+            max-width: 500px;
+            width: 100%;
+        }
+        button {
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px;
+        }
+        button:hover {
+            background: #218838;
+        }
+        .account-info {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            display: none;
+        }
+        .account-info.show {
+            display: block;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🆕 快速建立測試帳號</h1>
+        <p>為了測試 TOTP 綁定功能，讓我們先建立一個測試帳號</p>
+
+        <button onclick="createAccount()">建立新帳號</button>
+        <button onclick="showAllAccounts()">查看所有帳號</button>
+        <button onclick="clearAllAccounts()">清除所有帳號</button>
+
+        <div id="accountInfo" class="account-info">
+            <h3>✅ 帳號建立成功！</h3>
+            <p><strong>帳號：</strong><span id="username"></span></p>
+            <p><strong>密碼：</strong>Ys@22466564</p>
+            <p>請記住這個帳號，您可以使用它來測試 TOTP 綁定功能</p>
+        </div>
+
+        <div id="allAccounts" class="account-info">
+            <h3>📋 所有帳號列表</h3>
+            <div id="accountsList"></div>
+        </div>
+
+        <hr style="margin: 30px 0; border: 1px solid rgba(255,255,255,0.3);">
+
+        <a href="/" style="color: white; text-decoration: none;">
+            <button>🏠 返回主頁測試登入</button>
+        </a>
+    </div>
+
+    <script type="module">
+        import AccountManager from './src/accounts.js';
+
+        const accountManager = new AccountManager();
+        accountManager.initialize();
+
+        window.createAccount = () => {
+            const account = accountManager.createAccount('測試用帳號');
+
+            document.getElementById('username').textContent = account.username;
+            document.getElementById('accountInfo').classList.add('show');
+            document.getElementById('allAccounts').classList.remove('show');
+
+            // 自動複製帳號到剪貼板
+            navigator.clipboard.writeText(account.username).then(() => {
+                console.log('帳號已複製到剪貼板');
+            });
+        };
+
+        window.showAllAccounts = () => {
+            const accounts = accountManager.accounts;
+            const accountsList = document.getElementById('accountsList');
+
+            if (accounts.length === 0) {
+                accountsList.innerHTML = '<p>目前沒有任何帳號</p>';
+            } else {
+                accountsList.innerHTML = accounts.map(acc => `
+                    <div style="background: rgba(255,255,255,0.1); padding: 10px; margin: 5px 0; border-radius: 4px;">
+                        <strong>${acc.username}</strong> - ${acc.description}
+                        <br><small>建立時間: ${new Date(acc.createdAt).toLocaleString()}</small>
+                        <br><small>狀態: ${acc.isActive ? '啟用' : '停用'}</small>
+                    </div>
+                `).join('');
+            }
+
+            document.getElementById('allAccounts').classList.add('show');
+            document.getElementById('accountInfo').classList.remove('show');
+        };
+
+        window.clearAllAccounts = () => {
+            if (confirm('確定要清除所有帳號嗎？此操作無法復原！')) {
+                accountManager.clearAllData();
+                alert('所有帳號已清除');
+                document.getElementById('allAccounts').classList.remove('show');
+                document.getElementById('accountInfo').classList.remove('show');
+            }
+        };
+    </script>
+</body>
+</html>

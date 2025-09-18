@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>完整流程測試</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .test { margin: 10px 0; padding: 10px; border: 1px solid #ccc; }
+        .pass { background: #d4edda; }
+        .fail { background: #f8d7da; }
+        button { margin: 5px; padding: 10px; }
+    </style>
+</head>
+<body>
+    <h1>認證系統完整流程測試</h1>
+
+    <div id="results"></div>
+
+    <div>
+        <button onclick="runAllTests()">執行所有測試</button>
+        <button onclick="clearStorage()">清除存儲</button>
+        <button onclick="testManagePage()">測試管理頁面</button>
+        <button onclick="testLoginPage()">測試登入頁面</button>
+        <button onclick="testMainPage()">測試主頁面</button>
+    </div>
+
+    <script type="module">
+        import AccountManager from './src/accounts.js';
+
+        let results = [];
+
+        function log(message, type = 'info') {
+            results.push({ message, type, time: new Date().toLocaleTimeString() });
+            updateDisplay();
+        }
+
+        function updateDisplay() {
+            const container = document.getElementById('results');
+            container.innerHTML = results.map(r => `
+                <div class="test ${r.type}">
+                    [${r.time}] ${r.message}
+                </div>
+            `).join('');
+        }
+
+        window.clearStorage = () => {
+            localStorage.clear();
+            sessionStorage.clear();
+            results = [];
+            log('✅ 存儲已清除', 'pass');
+        };
+
+        window.testManagePage = async () => {
+            try {
+                log('🧪 測試管理頁面...', 'info');
+
+                // 清除存儲
+                localStorage.clear();
+                sessionStorage.clear();
+
+                // 創建帳號管理器
+                const accountManager = new AccountManager();
+                accountManager.initialize();
+
+                if (accountManager.accounts.length === 0) {
+                    log('✅ 無帳號狀態正確', 'pass');
+
+                    // 創建第一個管理員帳號
+                    const account = accountManager.createFirstAdminAccount();
+                    log(`✅ 創建管理員帳號: ${account.username}`, 'pass');
+
+                    // 驗證帳號
+                    const isValid = accountManager.validateAccount(account.username, accountManager.FIXED_PASSWORD);
+                    if (isValid) {
+                        log('✅ 帳號驗證通過', 'pass');
+                    } else {
+                        log('❌ 帳號驗證失敗', 'fail');
+                    }
+                } else {
+                    log('ℹ️ 已有帳號存在', 'info');
+                }
+            } catch (error) {
+                log(`❌ 管理頁面測試失敗: ${error.message}`, 'fail');
+            }
+        };
+
+        window.testLoginPage = () => {
+            try {
+                log('🧪 測試登入頁面...', 'info');
+
+                const accountManager = new AccountManager();
+                accountManager.initialize();
+
+                if (accountManager.accounts.length > 0) {
+                    const account = accountManager.accounts[0];
+
+                    // 模擬登入成功
+                    const authData = {
+                        authenticated: true,
+                        username: account.username,
+                        loginTime: Date.now(),
+                        expires: Date.now() + (8 * 3600 * 1000)
+                    };
+
+                    sessionStorage.setItem('factoryAuth', JSON.stringify(authData));
+                    log('✅ 登入模擬成功', 'pass');
+
+                    // 檢查認證狀態
+                    const authCheck = sessionStorage.getItem('factoryAuth');
+                    if (authCheck) {
+                        const auth = JSON.parse(authCheck);
+                        const isAuthenticated = Date.now() < auth.expires && auth.authenticated;
+                        if (isAuthenticated) {
+                            log('✅ 認證狀態正確', 'pass');
+                        } else {
+                            log('❌ 認證狀態錯誤', 'fail');
+                        }
+                    }
+                } else {
+                    log('⚠️ 無帳號可測試登入', 'info');
+                }
+            } catch (error) {
+                log(`❌ 登入頁面測試失敗: ${error.message}`, 'fail');
+            }
+        };
+
+        window.testMainPage = () => {
+            try {
+                log('🧪 測試主頁面認證檢查...', 'info');
+
+                // 測試無認證狀態
+                sessionStorage.removeItem('factoryAuth');
+
+                const authData = sessionStorage.getItem('factoryAuth');
+                if (!authData) {
+                    log('✅ 無認證狀態檢查正確', 'pass');
+                } else {
+                    log('❌ 無認證狀態檢查失敗', 'fail');
+                }
+
+                // 測試有認證狀態
+                const validAuth = {
+                    authenticated: true,
+                    username: 'TEST123456A',
+                    loginTime: Date.now(),
+                    expires: Date.now() + (8 * 3600 * 1000)
+                };
+
+                sessionStorage.setItem('factoryAuth', JSON.stringify(validAuth));
+
+                const checkAuth = sessionStorage.getItem('factoryAuth');
+                if (checkAuth) {
+                    const auth = JSON.parse(checkAuth);
+                    const isValid = Date.now() < auth.expires && auth.authenticated;
+                    if (isValid) {
+                        log('✅ 有效認證狀態檢查正確', 'pass');
+                    } else {
+                        log('❌ 有效認證狀態檢查失敗', 'fail');
+                    }
+                }
+            } catch (error) {
+                log(`❌ 主頁面測試失敗: ${error.message}`, 'fail');
+            }
+        };
+
+        window.runAllTests = async () => {
+            results = [];
+            log('🚀 開始完整流程測試', 'info');
+
+            await window.testManagePage();
+            await new Promise(resolve => setTimeout(resolve, 500));
+
+            await window.testLoginPage();
+            await new Promise(resolve => setTimeout(resolve, 500));
+
+            await window.testMainPage();
+
+            log('🏁 所有測試完成', 'info');
+        };
+
+        // 自動運行測試
+        window.addEventListener('load', () => {
+            log('🔧 測試頁面載入完成', 'pass');
+        });
+    </script>
+</body>
+</html>

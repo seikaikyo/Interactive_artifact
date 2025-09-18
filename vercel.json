@@ -1,9 +1,13 @@
 {
-  "cleanUrls": true,
+  "functions": {
+    "src/**": {
+      "maxDuration": 10
+    }
+  },
   "rewrites": [
     { "source": "/login", "destination": "/login.html" },
     { "source": "/setup", "destination": "/setup.html" },
     { "source": "/manage", "destination": "/manage.html" },
-    { "source": "/((?!.*\\.).)*", "destination": "/index.html" }
+    { "source": "/(.*)", "destination": "/index.html" }
   ]
 }

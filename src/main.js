@@ -5,21 +5,32 @@ import AIComponents from './ai-components.js';
 
 // 檢查認證狀態
 function checkAuthentication() {
-    // 動態導入認證模組
-    import('./auth.js').then(() => {
-        if (!window.AuthSystem.isAuthenticated()) {
-            window.AuthSystem.redirectToLogin();
+    try {
+        const authData = sessionStorage.getItem('factoryAuth');
+        if (!authData) {
+            window.location.href = '/login.html';
             return false;
         }
+
+        const auth = JSON.parse(authData);
+        if (Date.now() > auth.expires || !auth.authenticated) {
+            sessionStorage.removeItem('factoryAuth');
+            window.location.href = '/login.html';
+            return false;
+        }
+
         return true;
-    }).catch(() => {
-        // 如果認證模組載入失敗，重定向到登入頁面
+    } catch (error) {
         window.location.href = '/login.html';
-    });
+        return false;
+    }
 }
 
 // 執行認證檢查
-checkAuthentication();
+if (!checkAuthentication()) {
+    // 如果認證失敗，停止後續執行
+    throw new Error('Authentication required');
+}
 
 // 將 HTML 內容插入到 app div
 document.querySelector('#app').innerHTML = `
@@ -460,9 +471,7 @@ setTimeout(() => {
 // 登出功能
 document.getElementById('logoutBtn').addEventListener('click', () => {
     if (confirm('確定要登出系統嗎？')) {
-        import('./auth.js').then(() => {
-            const auth = new window.AuthSystem();
-            auth.logout();
-        });
+        sessionStorage.removeItem('factoryAuth');
+        window.location.href = '/login.html';
     }
 });

@@ -41,8 +41,12 @@ const urlParams = new URLSearchParams(window.location.search);
 const page = urlParams.get('page');
 
 if (page === 'login') {
-    // 載入登入頁面內容
-    loadLoginPage();
+    // 如果已經登入，跳轉到主頁
+    if (checkAuthentication()) {
+        window.location.href = '/';
+    } else {
+        loadLoginPage();
+    }
 } else if (page === 'manage') {
     // 載入管理頁面內容
     loadManagePage();
@@ -87,7 +91,7 @@ if (page === 'login') {
         <div class="header-right">
             <div class="time" id="currentTime"></div>
             <div class="user-info" id="userInfo" style="font-size: 14px; opacity: 0.8; margin-right: 15px;">載入中...</div>
-            <a href="/manage.html" class="logout-btn" style="text-decoration: none; margin-right: 10px; background: rgba(0, 212, 255, 0.2); border-color: rgba(0, 212, 255, 0.4); color: #00d4ff;">管理中心</a>
+            <a href="/?page=manage" class="logout-btn" style="text-decoration: none; margin-right: 10px; background: rgba(0, 212, 255, 0.2); border-color: rgba(0, 212, 255, 0.4); color: #00d4ff;">帳號管理</a>
             <button class="logout-btn" id="logoutBtn">登出</button>
         </div>
     </div>

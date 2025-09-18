@@ -50,9 +50,6 @@ if (page === 'login') {
 } else if (page === 'manage') {
     // 載入管理頁面內容
     loadManagePage();
-} else if (page === 'reset') {
-    // 載入重置頁面內容
-    loadResetPage();
 } else if (!checkAuthentication()) {
     // 顯示未認證提示，但不自動跳轉
     document.querySelector('#app').innerHTML = `
@@ -69,14 +66,10 @@ if (page === 'login') {
                     <button onclick="window.location.href='?page=manage'" style="display: block; width: 100%; margin: 10px 0; padding: 12px 24px; background: rgba(40, 167, 69, 0.3); color: #28a745; border: 1px solid rgba(40, 167, 69, 0.5); border-radius: 8px; cursor: pointer;">
                         👥 帳號管理
                     </button>
-
-                    <button onclick="window.location.href='?page=reset'" style="display: block; width: 100%; margin: 10px 0; padding: 12px 24px; background: rgba(220, 53, 69, 0.3); color: #dc3545; border: 1px solid rgba(220, 53, 69, 0.5); border-radius: 8px; cursor: pointer;">
-                        🔧 數據重置
-                    </button>
                 </div>
 
                 <div style="font-size: 12px; opacity: 0.7; margin-top: 20px;">
-                    首次使用請先使用「帳號管理」創建管理員帳號
+                    系統會自動創建測試帳號，或使用「帳號管理」管理授權
                 </div>
             </div>
         </div>
@@ -648,21 +641,6 @@ function loadManagePage() {
     loadManageFunctions();
 }
 
-function loadResetPage() {
-    document.querySelector('#app').innerHTML = `
-        <div id="reset-loading" style="display: flex; align-items: center; justify-content: center; min-height: 100vh; background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); color: white; font-family: 'Microsoft JhengHei', Arial, sans-serif;">
-            <div style="text-align: center;">
-                <h1>🔧 載入重置工具...</h1>
-                <button onclick="window.location.href='/'" style="margin-top: 20px; background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); color: white; padding: 8px 16px; border-radius: 6px; cursor: pointer;">← 返回首頁</button>
-            </div>
-        </div>
-    `;
-
-    // 這裡可以載入重置邏輯或重定向到 reset.html
-    setTimeout(() => {
-        window.location.href = '/reset.html';
-    }, 1000);
-}
 
 // 管理功能函數
 function loadManageFunctions() {

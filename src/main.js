@@ -54,7 +54,7 @@ if (page === 'login') {
     document.querySelector('#app').innerHTML = `
         <div style="display: flex; align-items: center; justify-content: center; min-height: 100vh; background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); color: white; font-family: 'Microsoft JhengHei', Arial, sans-serif;">
             <div style="text-align: center; background: rgba(255, 255, 255, 0.1); padding: 40px; border-radius: 20px; backdrop-filter: blur(20px); max-width: 500px;">
-                <h1>🔐 WISE-IOT Dashboard</h1>
+                <h1>🔐 WISE-IOT Dashboard v3.1</h1>
                 <p style="margin: 20px 0;">需要認證才能訪問系統</p>
 
                 <div style="margin: 30px 0;">

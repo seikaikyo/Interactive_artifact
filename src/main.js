@@ -36,15 +36,44 @@ function checkAuthentication() {
     }
 }
 
-// 檢查認證但不強制跳轉
-if (!checkAuthentication()) {
+// 檢查 URL 參數決定顯示哪個頁面
+const urlParams = new URLSearchParams(window.location.search);
+const page = urlParams.get('page');
+
+if (page === 'login') {
+    // 載入登入頁面內容
+    loadLoginPage();
+} else if (page === 'manage') {
+    // 載入管理頁面內容
+    loadManagePage();
+} else if (page === 'reset') {
+    // 載入重置頁面內容
+    loadResetPage();
+} else if (!checkAuthentication()) {
     // 顯示未認證提示，但不自動跳轉
     document.querySelector('#app').innerHTML = `
         <div style="display: flex; align-items: center; justify-content: center; min-height: 100vh; background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); color: white; font-family: 'Microsoft JhengHei', Arial, sans-serif;">
-            <div style="text-align: center; background: rgba(255, 255, 255, 0.1); padding: 40px; border-radius: 20px; backdrop-filter: blur(20px);">
-                <h1>🔐 需要登入</h1>
-                <p style="margin: 20px 0;">請先登入系統以訪問儀表板</p>
-                <a href="/login.html" style="display: inline-block; padding: 12px 24px; background: rgba(0, 212, 255, 0.3); color: #00d4ff; text-decoration: none; border-radius: 8px; border: 1px solid rgba(0, 212, 255, 0.5);">前往登入</a>
+            <div style="text-align: center; background: rgba(255, 255, 255, 0.1); padding: 40px; border-radius: 20px; backdrop-filter: blur(20px); max-width: 500px;">
+                <h1>🔐 WISE-IOT Dashboard</h1>
+                <p style="margin: 20px 0;">需要認證才能訪問系統</p>
+
+                <div style="margin: 30px 0;">
+                    <button onclick="window.location.href='?page=login'" style="display: block; width: 100%; margin: 10px 0; padding: 12px 24px; background: rgba(0, 212, 255, 0.3); color: #00d4ff; border: 1px solid rgba(0, 212, 255, 0.5); border-radius: 8px; cursor: pointer;">
+                        🔑 系統登入
+                    </button>
+
+                    <button onclick="window.location.href='?page=manage'" style="display: block; width: 100%; margin: 10px 0; padding: 12px 24px; background: rgba(40, 167, 69, 0.3); color: #28a745; border: 1px solid rgba(40, 167, 69, 0.5); border-radius: 8px; cursor: pointer;">
+                        👥 帳號管理
+                    </button>
+
+                    <button onclick="window.location.href='?page=reset'" style="display: block; width: 100%; margin: 10px 0; padding: 12px 24px; background: rgba(220, 53, 69, 0.3); color: #dc3545; border: 1px solid rgba(220, 53, 69, 0.5); border-radius: 8px; cursor: pointer;">
+                        🔧 數據重置
+                    </button>
+                </div>
+
+                <div style="font-size: 12px; opacity: 0.7; margin-top: 20px;">
+                    首次使用請先使用「帳號管理」創建管理員帳號
+                </div>
             </div>
         </div>
     `;
@@ -496,3 +525,75 @@ setTimeout(() => {
     });
 
 } // 結束認證通過的區塊
+
+// 頁面載入函數
+function loadLoginPage() {
+    document.querySelector('#app').innerHTML = `
+        <div style="font-family: 'Microsoft JhengHei', Arial, sans-serif; background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); color: white; min-height: 100vh; display: flex; align-items: center; justify-content: center;">
+            <div style="background: rgba(255, 255, 255, 0.1); border-radius: 20px; padding: 40px; backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.2); box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3); width: 100%; max-width: 400px; text-align: center;">
+                <div style="margin-bottom: 30px;">
+                    <h1 style="font-size: 24px; font-weight: 600; color: #e8f4ff; margin-bottom: 8px;">🔐 系統登入</h1>
+                    <p style="font-size: 14px; opacity: 0.8; color: #00d4ff;">輸入授權帳號密碼</p>
+                </div>
+
+                <form id="loginForm">
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: 500;">授權帳號</label>
+                        <input type="text" id="username" placeholder="請輸入授權帳號" required
+                               style="width: 100%; padding: 12px 16px; border: 1px solid rgba(255, 255, 255, 0.3); border-radius: 8px; background: rgba(255, 255, 255, 0.1); color: white; font-size: 16px;">
+                    </div>
+
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: block; margin-bottom: 8px; font-weight: 500;">系統密碼</label>
+                        <input type="password" id="password" placeholder="請輸入系統密碼" required
+                               style="width: 100%; padding: 12px 16px; border: 1px solid rgba(255, 255, 255, 0.3); border-radius: 8px; background: rgba(255, 255, 255, 0.1); color: white; font-size: 16px;">
+                    </div>
+
+                    <button type="submit" id="loginBtn"
+                            style="width: 100%; padding: 12px; background: rgba(76, 175, 80, 0.3); border: 1px solid rgba(76, 175, 80, 0.5); color: #4CAF50; border-radius: 8px; cursor: pointer; font-size: 16px; font-weight: 600;">
+                        🔐 驗證登入
+                    </button>
+
+                    <div id="errorMessage" style="display: none; margin-top: 15px; padding: 10px; background: rgba(220, 53, 69, 0.1); border: 1px solid rgba(220, 53, 69, 0.3); color: #dc3545; border-radius: 8px;"></div>
+                </form>
+
+                <div style="margin-top: 20px;">
+                    <button onclick="window.location.href='/'" style="background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); color: white; padding: 8px 16px; border-radius: 6px; cursor: pointer;">← 返回首頁</button>
+                </div>
+            </div>
+        </div>
+    `;
+
+    // 載入認證邏輯
+    import('./auth.js');
+}
+
+function loadManagePage() {
+    document.querySelector('#app').innerHTML = `
+        <div id="manage-loading" style="display: flex; align-items: center; justify-content: center; min-height: 100vh; background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); color: white; font-family: 'Microsoft JhengHei', Arial, sans-serif;">
+            <div style="text-align: center;">
+                <h1>🔄 載入管理介面...</h1>
+                <button onclick="window.location.href='/'" style="margin-top: 20px; background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); color: white; padding: 8px 16px; border-radius: 6px; cursor: pointer;">← 返回首頁</button>
+            </div>
+        </div>
+    `;
+
+    // 載入管理邏輯
+    import('./manage.js');
+}
+
+function loadResetPage() {
+    document.querySelector('#app').innerHTML = `
+        <div id="reset-loading" style="display: flex; align-items: center; justify-content: center; min-height: 100vh; background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); color: white; font-family: 'Microsoft JhengHei', Arial, sans-serif;">
+            <div style="text-align: center;">
+                <h1>🔧 載入重置工具...</h1>
+                <button onclick="window.location.href='/'" style="margin-top: 20px; background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); color: white; padding: 8px 16px; border-radius: 6px; cursor: pointer;">← 返回首頁</button>
+            </div>
+        </div>
+    `;
+
+    // 這裡可以載入重置邏輯或重定向到 reset.html
+    setTimeout(() => {
+        window.location.href = '/reset.html';
+    }, 1000);
+}

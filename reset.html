@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>系統重置工具</title>
+    <style>
+        body {
+            font-family: 'Microsoft JhengHei', Arial, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 40px;
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 600px;
+            text-align: center;
+        }
+
+        .btn {
+            background: rgba(220, 53, 69, 0.3);
+            border: 1px solid rgba(220, 53, 69, 0.5);
+            color: #dc3545;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            background: rgba(220, 53, 69, 0.5);
+            transform: translateY(-1px);
+        }
+
+        .btn.success {
+            background: rgba(40, 167, 69, 0.3);
+            border-color: rgba(40, 167, 69, 0.5);
+            color: #28a745;
+        }
+
+        .btn.success:hover {
+            background: rgba(40, 167, 69, 0.5);
+        }
+
+        .log {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: left;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .warning {
+            background: rgba(255, 193, 7, 0.1);
+            border: 1px solid rgba(255, 193, 7, 0.3);
+            color: #ffc107;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 系統重置工具</h1>
+        <p>清除所有存儲數據並重新創建管理員帳號</p>
+
+        <div class="warning">
+            <strong>⚠️ 警告</strong><br>
+            此操作將完全清除所有帳號數據、認證會話和 TOTP 綁定記錄。<br>
+            請確認您要重新開始設置系統。
+        </div>
+
+        <div>
+            <button class="btn" onclick="checkCurrentData()">檢查當前數據</button>
+            <button class="btn" onclick="clearAllData()">清除所有數據</button>
+            <button class="btn success" onclick="createFirstAdmin()">創建第一個管理員</button>
+        </div>
+
+        <div class="log" id="log"></div>
+
+        <div style="margin-top: 20px;">
+            <a href="/login.html" style="color: #00d4ff; text-decoration: none;">→ 前往登入頁面</a> |
+            <a href="/manage.html" style="color: #00d4ff; text-decoration: none;">→ 前往管理頁面</a> |
+            <a href="/" style="color: #00d4ff; text-decoration: none;">→ 前往主頁</a>
+        </div>
+    </div>
+
+    <script type="module">
+        import AccountManager from './src/accounts.js';
+
+        let logMessages = [];
+
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = `[${timestamp}] ${message}`;
+            logMessages.push(logEntry);
+
+            const logEl = document.getElementById('log');
+            logEl.innerHTML = logMessages.join('\n');
+            logEl.scrollTop = logEl.scrollHeight;
+
+            console.log(logEntry);
+        }
+
+        window.checkCurrentData = () => {
+            log('🔍 檢查當前數據狀態...');
+
+            try {
+                // 檢查 localStorage
+                const localKeys = Object.keys(localStorage);
+                log(`📦 localStorage 項目數: ${localKeys.length}`);
+                localKeys.forEach(key => {
+                    log(`  - ${key}: ${localStorage.getItem(key)?.substring(0, 50)}...`);
+                });
+
+                // 檢查 sessionStorage
+                const sessionKeys = Object.keys(sessionStorage);
+                log(`🗂️ sessionStorage 項目數: ${sessionKeys.length}`);
+                sessionKeys.forEach(key => {
+                    log(`  - ${key}: ${sessionStorage.getItem(key)?.substring(0, 50)}...`);
+                });
+
+                // 檢查帳號管理器
+                const accountManager = new AccountManager();
+                accountManager.initialize();
+                log(`👥 系統帳號數量: ${accountManager.accounts.length}`);
+
+                if (accountManager.accounts.length > 0) {
+                    accountManager.accounts.forEach((account, index) => {
+                        log(`  ${index + 1}. ${account.username} (${account.isActive ? '活躍' : '停用'}) - 創建於 ${new Date(account.createdAt).toLocaleString()}`);
+                    });
+                }
+
+            } catch (error) {
+                log(`❌ 檢查數據時發生錯誤: ${error.message}`);
+            }
+        };
+
+        window.clearAllData = () => {
+            if (!confirm('確定要清除所有數據嗎？此操作無法復原！')) {
+                return;
+            }
+
+            log('🧹 開始清除所有數據...');
+
+            try {
+                // 清除 localStorage
+                const localCount = Object.keys(localStorage).length;
+                localStorage.clear();
+                log(`✅ 已清除 ${localCount} 個 localStorage 項目`);
+
+                // 清除 sessionStorage
+                const sessionCount = Object.keys(sessionStorage).length;
+                sessionStorage.clear();
+                log(`✅ 已清除 ${sessionCount} 個 sessionStorage 項目`);
+
+                log('🎉 所有數據已清除完成！');
+                log('💡 現在可以創建第一個管理員帳號');
+
+            } catch (error) {
+                log(`❌ 清除數據時發生錯誤: ${error.message}`);
+            }
+        };
+
+        window.createFirstAdmin = () => {
+            log('🚀 開始創建第一個管理員帳號...');
+
+            try {
+                const accountManager = new AccountManager();
+                accountManager.initialize();
+
+                if (accountManager.accounts.length > 0) {
+                    log('⚠️ 系統已有帳號存在，請先清除數據');
+                    return;
+                }
+
+                const account = accountManager.createFirstAdminAccount();
+
+                log(`✅ 管理員帳號創建成功！`);
+                log(`📋 帳號資訊:`);
+                log(`   帳號: ${account.username}`);
+                log(`   密碼: ${accountManager.FIXED_PASSWORD}`);
+                log(`   創建時間: ${new Date(account.createdAt).toLocaleString()}`);
+                log('');
+                log('🎯 請記住這些資訊，現在可以前往登入頁面測試！');
+
+            } catch (error) {
+                log(`❌ 創建管理員帳號失敗: ${error.message}`);
+            }
+        };
+
+        // 頁面載入時檢查數據
+        window.addEventListener('load', () => {
+            log('🔧 系統重置工具已載入');
+            checkCurrentData();
+        });
+    </script>
+</body>
+</html>

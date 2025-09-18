@@ -569,17 +569,78 @@ function loadLoginPage() {
 }
 
 function loadManagePage() {
+    // 檢查是否已登入（管理頁面需要認證）
+    const authData = sessionStorage.getItem('factoryAuth');
+    let isAuthenticated = false;
+
+    if (authData) {
+        try {
+            const auth = JSON.parse(authData);
+            isAuthenticated = Date.now() < auth.expires && auth.authenticated;
+        } catch (e) {
+            isAuthenticated = false;
+        }
+    }
+
+    if (!isAuthenticated) {
+        // 未登入，顯示需要登入的訊息
+        document.querySelector('#app').innerHTML = `
+            <div style="display: flex; align-items: center; justify-content: center; min-height: 100vh; background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); color: white; font-family: 'Microsoft JhengHei', Arial, sans-serif;">
+                <div style="text-align: center; background: rgba(255, 255, 255, 0.1); padding: 40px; border-radius: 20px; backdrop-filter: blur(20px);">
+                    <h1>🔐 需要登入</h1>
+                    <p style="margin: 20px 0;">請先登入系統才能訪問管理介面</p>
+                    <button onclick="window.location.href='/?page=login'" style="padding: 12px 24px; background: rgba(0, 212, 255, 0.3); color: #00d4ff; border: 1px solid rgba(0, 212, 255, 0.5); border-radius: 8px; cursor: pointer; margin: 10px;">前往登入</button>
+                    <button onclick="window.location.href='/'" style="padding: 12px 24px; background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); color: white; border-radius: 8px; cursor: pointer; margin: 10px;">返回首頁</button>
+                </div>
+            </div>
+        `;
+        return;
+    }
+
+    // 已登入，載入管理介面
     document.querySelector('#app').innerHTML = `
-        <div id="manage-loading" style="display: flex; align-items: center; justify-content: center; min-height: 100vh; background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); color: white; font-family: 'Microsoft JhengHei', Arial, sans-serif;">
-            <div style="text-align: center;">
-                <h1>🔄 載入管理介面...</h1>
-                <button onclick="window.location.href='/'" style="margin-top: 20px; background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); color: white; padding: 8px 16px; border-radius: 6px; cursor: pointer;">← 返回首頁</button>
+        <div style="min-height: 100vh; background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); color: white; font-family: 'Microsoft JhengHei', Arial, sans-serif; padding: 20px;">
+            <div style="max-width: 1200px; margin: 0 auto;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+                    <h1 style="font-size: 28px; font-weight: 600;">👥 帳號管理中心</h1>
+                    <div>
+                        <button onclick="window.location.href='/'" style="background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); color: white; padding: 8px 16px; border-radius: 6px; cursor: pointer; margin-right: 10px;">← 返回首頁</button>
+                        <button onclick="logoutUser()" style="background: rgba(220, 53, 69, 0.3); border: 1px solid rgba(220, 53, 69, 0.5); color: #dc3545; padding: 8px 16px; border-radius: 6px; cursor: pointer;">登出</button>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 30px;">
+                    <div style="background: rgba(255, 255, 255, 0.1); padding: 20px; border-radius: 12px; backdrop-filter: blur(10px);">
+                        <h3 style="margin: 0 0 10px 0; color: #4CAF50;">📊 系統統計</h3>
+                        <div id="statsContent">載入中...</div>
+                    </div>
+
+                    <div style="background: rgba(255, 255, 255, 0.1); padding: 20px; border-radius: 12px; backdrop-filter: blur(10px);">
+                        <h3 style="margin: 0 0 10px 0; color: #00d4ff;">🔐 當前帳號狀態</h3>
+                        <div id="currentAccountStatus">載入中...</div>
+                    </div>
+                </div>
+
+                <div style="background: rgba(255, 255, 255, 0.1); padding: 20px; border-radius: 12px; backdrop-filter: blur(10px); margin-bottom: 20px;">
+                    <h3 style="margin: 0 0 15px 0;">⚙️ 管理操作</h3>
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                        <button onclick="createNewAccount()" style="background: rgba(40, 167, 69, 0.3); border: 1px solid rgba(40, 167, 69, 0.5); color: #28a745; padding: 10px 20px; border-radius: 6px; cursor: pointer;">🆕 創建新帳號</button>
+                        <button onclick="bindTOTP()" style="background: rgba(255, 193, 7, 0.3); border: 1px solid rgba(255, 193, 7, 0.5); color: #ffc107; padding: 10px 20px; border-radius: 6px; cursor: pointer;">🔗 綁定 Authenticator</button>
+                        <button onclick="exportData()" style="background: rgba(0, 212, 255, 0.3); border: 1px solid rgba(0, 212, 255, 0.5); color: #00d4ff; padding: 10px 20px; border-radius: 6px; cursor: pointer;">📤 匯出數據</button>
+                        <button onclick="clearAllData()" style="background: rgba(220, 53, 69, 0.3); border: 1px solid rgba(220, 53, 69, 0.5); color: #dc3545; padding: 10px 20px; border-radius: 6px; cursor: pointer;">🗑️ 清除所有數據</button>
+                    </div>
+                </div>
+
+                <div style="background: rgba(255, 255, 255, 0.1); padding: 20px; border-radius: 12px; backdrop-filter: blur(10px);">
+                    <h3 style="margin: 0 0 15px 0;">👥 帳號列表</h3>
+                    <div id="accountsList">載入中...</div>
+                </div>
             </div>
         </div>
     `;
 
-    // 載入管理邏輯
-    import('./manage.js');
+    // 載入管理功能
+    loadManageFunctions();
 }
 
 function loadResetPage() {
@@ -596,4 +657,152 @@ function loadResetPage() {
     setTimeout(() => {
         window.location.href = '/reset.html';
     }, 1000);
+}
+
+// 管理功能函數
+function loadManageFunctions() {
+    import('./accounts.js').then((module) => {
+        const AccountManager = module.default;
+        const accountManager = new AccountManager();
+        accountManager.initialize();
+
+        // 更新統計信息
+        function updateStats() {
+            const stats = accountManager.getStatistics();
+            document.getElementById('statsContent').innerHTML = `
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; font-size: 14px;">
+                    <div>總帳號數: <strong>${stats.totalAccounts}</strong></div>
+                    <div>活躍帳號: <strong>${stats.activeAccounts}</strong></div>
+                    <div>已綁定: <strong>${stats.boundAccounts}</strong></div>
+                    <div>綁定率: <strong>${stats.bindingRate}%</strong></div>
+                </div>
+            `;
+        }
+
+        // 更新當前帳號狀態
+        function updateCurrentStatus() {
+            const authData = sessionStorage.getItem('factoryAuth');
+            if (authData) {
+                const auth = JSON.parse(authData);
+                const isBound = accountManager.isAccountBound(auth.username);
+
+                document.getElementById('currentAccountStatus').innerHTML = `
+                    <div style="font-size: 14px;">
+                        <div>帳號: <strong>${auth.username}</strong></div>
+                        <div>登入時間: ${new Date(auth.loginTime).toLocaleString()}</div>
+                        <div>TOTP 狀態: ${isBound ? '<span style="color: #4CAF50;">已綁定</span>' : '<span style="color: #ffc107;">未綁定</span>'}</div>
+                    </div>
+                `;
+            }
+        }
+
+        // 更新帳號列表
+        function updateAccountsList() {
+            const accounts = accountManager.getAccountList();
+            if (accounts.length === 0) {
+                document.getElementById('accountsList').innerHTML = '<p style="text-align: center; opacity: 0.7;">暫無帳號</p>';
+                return;
+            }
+
+            const accountsHTML = accounts.map(account => `
+                <div style="background: rgba(255, 255, 255, 0.05); padding: 15px; border-radius: 8px; margin-bottom: 10px; border: 1px solid rgba(255, 255, 255, 0.1);">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <div><strong>${account.username}</strong> - ${account.description}</div>
+                            <div style="font-size: 12px; opacity: 0.7;">
+                                創建: ${new Date(account.createdAt).toLocaleString()} |
+                                登入次數: ${account.loginCount} |
+                                狀態: ${account.isActive ? '活躍' : '停用'} |
+                                TOTP: ${account.isBound ? '已綁定' : '未綁定'}
+                            </div>
+                        </div>
+                        <div>
+                            ${account.isActive ?
+                                `<button onclick="deactivateAccount('${account.username}')" style="background: rgba(220, 53, 69, 0.3); border: 1px solid rgba(220, 53, 69, 0.5); color: #dc3545; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 12px;">停用</button>` :
+                                `<button onclick="reactivateAccount('${account.username}')" style="background: rgba(40, 167, 69, 0.3); border: 1px solid rgba(40, 167, 69, 0.5); color: #28a745; padding: 5px 10px; border-radius: 4px; cursor: pointer; font-size: 12px;">啟用</button>`
+                            }
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            document.getElementById('accountsList').innerHTML = accountsHTML;
+        }
+
+        // 全域函數
+        window.createNewAccount = () => {
+            const description = prompt('請輸入新帳號的描述（可選）：') || '手動創建';
+            const account = accountManager.createAccount(description);
+            alert(`新帳號創建成功！\\n帳號: ${account.username}\\n密碼: ${accountManager.FIXED_PASSWORD}\\n\\n請妥善保管帳號資訊。`);
+            updateStats();
+            updateAccountsList();
+        };
+
+        window.bindTOTP = () => {
+            alert('TOTP 綁定功能將在下一版本中提供完整的 Authenticator App 整合。');
+        };
+
+        window.exportData = () => {
+            accountManager.exportData();
+        };
+
+        window.clearAllData = () => {
+            if (confirm('確定要清除所有數據嗎？此操作無法復原！')) {
+                const success = accountManager.clearAllData();
+                if (success) {
+                    alert('所有數據已清除，頁面將重新載入');
+                    window.location.href = '/';
+                }
+            }
+        };
+
+        window.logoutUser = () => {
+            if (confirm('確定要登出嗎？')) {
+                sessionStorage.removeItem('factoryAuth');
+                window.location.href = '/';
+            }
+        };
+
+        window.deactivateAccount = (username) => {
+            const authData = sessionStorage.getItem('factoryAuth');
+            const currentUser = authData ? JSON.parse(authData).username : '';
+
+            if (username === currentUser) {
+                alert('無法停用當前登入的帳號');
+                return;
+            }
+
+            if (confirm(`確定要停用帳號 ${username} 嗎？`)) {
+                const success = accountManager.deactivateAccount(username);
+                if (success) {
+                    alert(`帳號 ${username} 已停用`);
+                    updateStats();
+                    updateAccountsList();
+                }
+            }
+        };
+
+        window.reactivateAccount = (username) => {
+            const account = accountManager.accounts.find(acc => acc.username === username);
+            if (account) {
+                account.isActive = true;
+                accountManager.saveAccounts();
+                alert(`帳號 ${username} 已重新啟用`);
+                updateStats();
+                updateAccountsList();
+            }
+        };
+
+        // 初始載入數據
+        updateStats();
+        updateCurrentStatus();
+        updateAccountsList();
+
+        // 定期更新
+        setInterval(() => {
+            updateStats();
+            updateCurrentStatus();
+            updateAccountsList();
+        }, 30000);
+    });
 }

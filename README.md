@@ -1,6 +1,6 @@
-# 鈺祥企業柳營再生戰情中心 - WISE-IOT Dashboard v3.0
+# 鈺祥企業柳營再生戰情中心 - WISE-IOT Dashboard v3.1
 
-基於研華 WISE-IOT 與 iEMS 概念發展的工廠智慧監控儀表板，**現已升級為企業級安全認證系統**，具備完整的帳號管理與雙重驗證功能。
+基於研華 WISE-IOT 與 iEMS 概念發展的工廠智慧監控儀表板，**現已升級為企業級安全認證系統**，具備完整的帳號管理與 TOTP 雙重驗證功能。
 
 ## 🔐 安全認證系統
 
@@ -84,32 +84,50 @@ npm run preview
 
 ### 🔐 首次使用安全設置
 
-#### 管理員初次設置：
-1. **訪問管理頁面**：http://localhost:5173/manage.html
-2. **創建首個帳號**：系統會提示創建第一個管理員帳號
-3. **記錄帳號資訊**：妥善保存生成的亂數帳號
-4. **設置完成**：使用帳號 + 固定密碼登入系統
+#### 線上版本（推薦）：
+- **直接訪問**：https://wise-iot-factory-dashboard.vercel.app
+- **自動帳號創建**：首次訪問會自動生成測試帳號
+- **登入提示**：登入頁面會顯示可用的測試帳號
+- **固定密碼**：`[REDACTED]`（出於安全考慮不在介面顯示）
 
-#### 一般使用者：
-1. **取得授權帳號**：聯繫管理員申請帳號
-2. **系統登入**：使用提供的帳號 + 固定密碼
-3. **選擇性綁定**：可綁定 Authenticator App 增強安全性
+#### 本地開發環境：
+1. **啟動開發伺服器**：`npm run dev`
+2. **訪問系統**：http://localhost:5173
+3. **自動帳號創建**：系統會自動創建測試帳號
+4. **帳號管理**：可使用 `/create_account.html` 手動創建帳號
+
+#### TOTP 雙重驗證設置：
+1. **登入系統**：使用帳號密碼登入
+2. **進入管理中心**：點擊右上角「帳號管理」
+3. **綁定 Authenticator**：
+   - 點擊「🔗 綁定 Authenticator」按鈕
+   - 使用手機 App 掃描 QR Code 或手動輸入密鑰
+   - 輸入 6 位數驗證碼完成綁定
+4. **雙重驗證登入**：下次登入時需要帳號密碼 + TOTP 驗證碼
 
 ### 部署
 專案已配置 Vercel 自動部署，推送至 main 分支即可觸發更新。
 
-**⚠️ 安全提醒：** 部署到生產環境後，管理員的本地帳號資料會保留，新訪客無法自行創建帳號。
+**🔧 更新域名別名：**
+```bash
+# 部署最新版本後，更新固定域名指向
+npx vercel alias [最新部署URL] wise-iot-factory-dashboard.vercel.app
+```
 
 ## 專案結構
 
 ```
-├── index.html              # 主要 HTML 入口
+├── index.html              # 主要 HTML 入口（SPA 架構）
+├── create_account.html     # 帳號創建工具頁面
 ├── src/
-│   ├── main.js             # 主要邏輯與圖表初始化
-│   └── style.css           # 樣式定義
+│   ├── main.js             # SPA 路由與主要邏輯
+│   ├── auth.js             # 認證系統與 TOTP 驗證
+│   ├── accounts.js         # 帳號管理系統
+│   ├── totp.js             # TOTP 加密與驗證實作
+│   └── style.css           # 響應式樣式定義
 ├── public/
 │   └── factory-image.png   # 靜態資源
-├── vercel.json             # Vercel 部署配置
+├── vercel.json             # Vercel SPA 路由配置
 └── package.json            # 專案相依性設定
 ```
 
@@ -123,8 +141,28 @@ npm run preview
 
 ## 部署連結
 
-- **正式環境**: https://wise-iot-center.vercel.app
+- **正式環境**: https://wise-iot-factory-dashboard.vercel.app
+- **帳號創建工具**: https://wise-iot-factory-dashboard.vercel.app/create_account.html
 - **GitHub Repository**: https://github.com/seikaikyo/Interactive_artifact.git
+
+## 🔒 安全功能詳述
+
+### TOTP 實作細節
+- **標準合規**: 遵循 RFC 6238 時間型一次性密碼標準
+- **加密算法**: HMAC-SHA1 雜湊演算法
+- **時間窗口**: 30秒更新週期，支援前後各1個窗口容錯
+- **兼容性**: 支援 Google Authenticator、Microsoft Authenticator、Authy 等主流應用
+
+### 資料安全
+- **本地存儲**: 使用 localStorage 持久化帳號資料
+- **會話管理**: SessionStorage 管理登入狀態，瀏覽器關閉自動清除
+- **密鑰保護**: TOTP 密鑰經過 Base32 編碼儲存
+- **防範措施**: 登入嘗試次數限制、自動鎖定機制
+
+### 系統架構
+- **SPA 設計**: 單頁應用架構，減少頁面跳轉
+- **模組化**: 認證、帳號管理、TOTP 功能完全分離
+- **響應式**: 支援桌面和行動裝置的一致體驗
 
 ## 維護說明
 
@@ -140,5 +178,22 @@ npm run preview
 
 ---
 
+## 更新日誌
+
+### v3.1 (2025-09-18)
+- ✅ **TOTP 雙重驗證系統完整實作**
+- ✅ **自動帳號創建機制**
+- ✅ **SPA 架構重構**
+- ✅ **響應式 UI 設計優化**
+- ✅ **Vercel 域名別名管理**
+
+### v3.0 (2025-09-17)
+- ✅ **安全認證系統建置**
+- ✅ **亂數帳號管理機制**
+- ✅ **基礎 TOTP 框架**
+
+---
+
 **開發者**: 選我正解
-**最後更新**: 2025-09-17
+**最後更新**: 2025-09-18
+**系統版本**: v3.1 - TOTP Authentication System

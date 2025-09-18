@@ -1,9 +1,9 @@
 {
+  "cleanUrls": true,
   "rewrites": [
     { "source": "/login", "destination": "/login.html" },
     { "source": "/setup", "destination": "/setup.html" },
     { "source": "/manage", "destination": "/manage.html" },
-    { "source": "/", "destination": "/index.html" },
-    { "source": "/index.html", "destination": "/index.html" }
+    { "source": "/((?!.*\\.).)*", "destination": "/index.html" }
   ]
 }

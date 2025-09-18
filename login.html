@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>鈺祥企業 - 系統登入</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Microsoft JhengHei', Arial, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login-container {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 40px;
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .logo {
+            margin-bottom: 30px;
+        }
+
+        .logo h1 {
+            font-size: 24px;
+            font-weight: 600;
+            color: #e8f4ff;
+            margin-bottom: 8px;
+        }
+
+        .logo p {
+            font-size: 14px;
+            opacity: 0.8;
+            color: #00d4ff;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: #e8f4ff;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #00d4ff;
+            box-shadow: 0 0 0 2px rgba(0, 212, 255, 0.2);
+        }
+
+        .form-group input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+
+        .login-btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #00d4ff, #0099cc);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 212, 255, 0.3);
+        }
+
+        .login-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .error-message {
+            color: #ff6b6b;
+            font-size: 14px;
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 6px;
+            background: rgba(255, 107, 107, 0.1);
+            border: 1px solid rgba(255, 107, 107, 0.3);
+            display: none;
+        }
+
+        .footer {
+            margin-top: 30px;
+            font-size: 12px;
+            opacity: 0.6;
+        }
+
+        @media (max-width: 480px) {
+            .login-container {
+                margin: 20px;
+                padding: 30px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="logo">
+            <h1>鈺祥企業</h1>
+            <p>柳營再生戰情中心</p>
+        </div>
+
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="username">授權帳號</label>
+                <input type="text" id="username" name="username"
+                       placeholder="請輸入授權帳號" required>
+                <small style="color: rgba(255,255,255,0.7); font-size: 12px; margin-top: 5px; display: block;">
+                    請使用系統提供的專用帳號
+                </small>
+            </div>
+
+            <div class="form-group">
+                <label for="password">系統密碼</label>
+                <input type="password" id="password" name="password"
+                       placeholder="請輸入系統密碼" required>
+                <small style="color: rgba(255,255,255,0.7); font-size: 12px; margin-top: 5px; display: block;">
+                    請輸入系統提供的固定密碼
+                </small>
+            </div>
+
+            <button type="submit" class="login-btn" id="loginBtn">
+                🔐 驗證登入
+            </button>
+
+            <div class="error-message" id="errorMessage"></div>
+
+            <div class="info-section" style="margin-top: 25px; padding: 15px; background: rgba(0,212,255,0.1); border: 1px solid rgba(0,212,255,0.3); border-radius: 8px;">
+                <p style="font-size: 13px; opacity: 0.9; line-height: 1.5;">
+                    <strong>🔑 安全提醒：</strong><br>
+                    • 登入成功後可綁定 Authenticator 進行雙重驗證<br>
+                    • 每個帳號只能綁定一次，請妥善保管<br>
+                    • 如需新帳號請聯繫系統管理員
+                </p>
+            </div>
+        </form>
+
+        <div class="footer">
+            <p>WISE-IOT Dashboard v2.0</p>
+        </div>
+    </div>
+
+    <script type="module" src="/src/auth.js"></script>
+</body>
+</html>

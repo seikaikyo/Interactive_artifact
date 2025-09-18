@@ -3,11 +3,34 @@ import './style.css';
 import AIEngine from './ai-engine.js';
 import AIComponents from './ai-components.js';
 
+// 檢查認證狀態
+function checkAuthentication() {
+    // 動態導入認證模組
+    import('./auth.js').then(() => {
+        if (!window.AuthSystem.isAuthenticated()) {
+            window.AuthSystem.redirectToLogin();
+            return false;
+        }
+        return true;
+    }).catch(() => {
+        // 如果認證模組載入失敗，重定向到登入頁面
+        window.location.href = '/login.html';
+    });
+}
+
+// 執行認證檢查
+checkAuthentication();
+
 // 將 HTML 內容插入到 app div
 document.querySelector('#app').innerHTML = `
     <div class="header">
         <h1>鈺祥企業柳營再生戰情中心 - WISE-IOT Dashboard</h1>
-        <div class="time" id="currentTime"></div>
+        <div class="header-right">
+            <div class="time" id="currentTime"></div>
+            <div class="user-info" id="userInfo" style="font-size: 14px; opacity: 0.8; margin-right: 15px;">載入中...</div>
+            <a href="/manage.html" class="logout-btn" style="text-decoration: none; margin-right: 10px; background: rgba(0, 212, 255, 0.2); border-color: rgba(0, 212, 255, 0.4); color: #00d4ff;">管理中心</a>
+            <button class="logout-btn" id="logoutBtn">登出</button>
+        </div>
     </div>
 
     <div class="dashboard">
@@ -257,6 +280,22 @@ function updateTime() {
 setInterval(updateTime, 1000);
 updateTime();
 
+// 顯示當前用戶信息
+function updateUserInfo() {
+    try {
+        const authData = sessionStorage.getItem('factoryAuth');
+        if (authData) {
+            const auth = JSON.parse(authData);
+            if (auth.username) {
+                document.getElementById('userInfo').textContent = `👤 ${auth.username}`;
+            }
+        }
+    } catch (error) {
+        console.error('獲取用戶信息失敗:', error);
+    }
+}
+updateUserInfo();
+
 // 圖表配置
 Chart.defaults.color = 'white';
 Chart.defaults.scale.grid.color = 'rgba(255, 255, 255, 0.1)';
@@ -417,3 +456,13 @@ setTimeout(() => {
     console.log('📊 可用功能：預測性維護、品質智慧分析、異常檢測、製程最佳化');
 
 }, 2000); // 等待2秒確保所有圖表載入完成
+
+// 登出功能
+document.getElementById('logoutBtn').addEventListener('click', () => {
+    if (confirm('確定要登出系統嗎？')) {
+        import('./auth.js').then(() => {
+            const auth = new window.AuthSystem();
+            auth.logout();
+        });
+    }
+});

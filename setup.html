@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>鈺祥企業 - Authenticator 設置</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Microsoft JhengHei', Arial, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .setup-container {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 40px;
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 500px;
+            text-align: center;
+        }
+
+        .logo {
+            margin-bottom: 30px;
+        }
+
+        .logo h1 {
+            font-size: 24px;
+            font-weight: 600;
+            color: #e8f4ff;
+            margin-bottom: 8px;
+        }
+
+        .logo p {
+            font-size: 14px;
+            opacity: 0.8;
+            color: #00d4ff;
+        }
+
+        .step {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .step-number {
+            background: #00d4ff;
+            color: #1e3c72;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .step h3 {
+            font-size: 18px;
+            margin-bottom: 10px;
+            color: #e8f4ff;
+        }
+
+        .step p {
+            font-size: 14px;
+            opacity: 0.9;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .qr-container {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin: 20px 0;
+            display: inline-block;
+        }
+
+        .qr-code {
+            width: 200px;
+            height: 200px;
+            border: none;
+        }
+
+        .secret-key {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 16px;
+            letter-spacing: 2px;
+            word-break: break-all;
+            color: #00d4ff;
+            border: 1px solid rgba(0, 212, 255, 0.3);
+        }
+
+        .app-icons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .app-icon {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 12px;
+            text-align: center;
+            min-width: 100px;
+            transition: all 0.3s ease;
+        }
+
+        .app-icon:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .app-icon .icon {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+
+        .app-icon .name {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+
+        .test-section {
+            margin-top: 30px;
+        }
+
+        .code-input {
+            width: 200px;
+            padding: 15px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 18px;
+            text-align: center;
+            letter-spacing: 3px;
+            margin: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .code-input:focus {
+            outline: none;
+            border-color: #00d4ff;
+            box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.2);
+        }
+
+        .code-input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+            letter-spacing: normal;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #00d4ff, #0099cc);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            padding: 14px 30px;
+            margin: 10px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 212, 255, 0.3);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn.secondary {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .success-message, .error-message {
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-size: 14px;
+        }
+
+        .success-message {
+            background: rgba(76, 175, 80, 0.1);
+            border: 1px solid rgba(76, 175, 80, 0.3);
+            color: #4CAF50;
+        }
+
+        .error-message {
+            background: rgba(255, 107, 107, 0.1);
+            border: 1px solid rgba(255, 107, 107, 0.3);
+            color: #ff6b6b;
+        }
+
+        .warning {
+            background: rgba(255, 193, 7, 0.1);
+            border: 1px solid rgba(255, 193, 7, 0.3);
+            color: #ffc107;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            font-size: 14px;
+        }
+
+        @media (max-width: 600px) {
+            .setup-container {
+                padding: 30px 20px;
+            }
+
+            .qr-code {
+                width: 150px;
+                height: 150px;
+            }
+
+            .app-icons {
+                gap: 10px;
+            }
+
+            .app-icon {
+                min-width: 80px;
+                padding: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="setup-container">
+        <div class="logo">
+            <h1>🔐 Authenticator 設置</h1>
+            <p>鈺祥企業柳營再生戰情中心</p>
+        </div>
+
+        <div class="step">
+            <div class="step-number">1</div>
+            <h3>下載 Authenticator App</h3>
+            <p>請先下載以下任一款驗證器應用程式：</p>
+
+            <div class="app-icons">
+                <div class="app-icon">
+                    <div class="icon">🔵</div>
+                    <div class="name">Google<br>Authenticator</div>
+                </div>
+                <div class="app-icon">
+                    <div class="icon">🔷</div>
+                    <div class="name">Microsoft<br>Authenticator</div>
+                </div>
+                <div class="app-icon">
+                    <div class="icon">🔶</div>
+                    <div class="name">Authy</div>
+                </div>
+                <div class="app-icon">
+                    <div class="icon">🔐</div>
+                    <div class="name">1Password</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">2</div>
+            <h3>掃描 QR Code</h3>
+            <p>打開 Authenticator App，點擊「新增帳號」或「+」，然後掃描下方 QR Code：</p>
+
+            <div class="qr-container">
+                <img id="qrCode" class="qr-code" src="" alt="QR Code Loading...">
+            </div>
+
+            <p style="font-size: 12px; opacity: 0.7;">
+                如果無法掃描，可以手動輸入以下密鑰：
+            </p>
+            <div class="secret-key" id="secretKey">載入中...</div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">3</div>
+            <h3>測試驗證碼</h3>
+            <p>設置完成後，請輸入 App 中顯示的6位數驗證碼進行測試：</p>
+
+            <div class="test-section">
+                <input type="text" id="testCode" class="code-input" placeholder="000 000" maxlength="7">
+                <br>
+                <button id="testBtn" class="btn">測試驗證碼</button>
+
+                <div id="message" style="display: none;"></div>
+            </div>
+        </div>
+
+        <div class="warning">
+            <strong>⚠️ 重要提醒：</strong><br>
+            請妥善保管您的 Authenticator App，遺失手機或刪除 App 將無法登入系統。
+            建議備份密鑰或在多個設備上設置。
+        </div>
+
+        <div style="margin-top: 30px;">
+            <button id="completeBtn" class="btn" disabled>完成設置</button>
+            <button id="resetBtn" class="btn secondary">重新生成密鑰</button>
+        </div>
+    </div>
+
+    <script type="module" src="/src/setup.js"></script>
+</body>
+</html>

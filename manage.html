@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>鈺祥企業 - 帳號管理中心</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Microsoft JhengHei', Arial, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .header {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 20px 30px;
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            color: #e8f4ff;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .current-user {
+            background: rgba(0, 212, 255, 0.2);
+            padding: 8px 16px;
+            border-radius: 6px;
+            border: 1px solid rgba(0, 212, 255, 0.4);
+            font-size: 14px;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #00d4ff, #0099cc);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            padding: 10px 20px;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 212, 255, 0.3);
+        }
+
+        .btn.danger {
+            background: linear-gradient(135deg, #ff6b6b, #e55353);
+        }
+
+        .btn.secondary {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 25px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .card h2 {
+            color: #e8f4ff;
+            margin-bottom: 20px;
+            font-size: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            padding-bottom: 10px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .stat-item {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: #00d4ff;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
+        .binding-status {
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+
+        .binding-status.bound {
+            background: rgba(76, 175, 80, 0.2);
+            border: 1px solid rgba(76, 175, 80, 0.4);
+            color: #4CAF50;
+        }
+
+        .binding-status.unbound {
+            background: rgba(255, 193, 7, 0.2);
+            border: 1px solid rgba(255, 193, 7, 0.4);
+            color: #ffc107;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        .data-table th,
+        .data-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 14px;
+        }
+
+        .data-table th {
+            background: rgba(0, 0, 0, 0.3);
+            font-weight: 600;
+            color: #e8f4ff;
+        }
+
+        .data-table tr:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-active {
+            background: rgba(76, 175, 80, 0.3);
+            color: #4CAF50;
+        }
+
+        .status-inactive {
+            background: rgba(158, 158, 158, 0.3);
+            color: #9e9e9e;
+        }
+
+        .status-bound {
+            background: rgba(0, 212, 255, 0.3);
+            color: #00d4ff;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-small {
+            padding: 6px 12px;
+            font-size: 12px;
+            min-width: auto;
+        }
+
+        .qr-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+
+        .qr-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 30px;
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+        }
+
+        .qr-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            display: inline-block;
+        }
+
+        .qr-code {
+            width: 200px;
+            height: 200px;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: white;
+            cursor: pointer;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .header-actions {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🏭 鈺祥企業帳號管理中心</h1>
+        <div class="header-actions">
+            <div class="current-user" id="currentUser">載入中...</div>
+            <a href="/" class="btn secondary">返回儀表板</a>
+            <button class="btn danger" onclick="logout()">登出</button>
+        </div>
+    </div>
+
+    <div class="dashboard-grid">
+        <!-- 系統統計 -->
+        <div class="card">
+            <h2>📊 系統統計</h2>
+            <div class="stats-grid" id="systemStats">
+                <div class="stat-item">
+                    <div class="stat-value" id="totalAccounts">-</div>
+                    <div class="stat-label">總帳號數</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="activeAccounts">-</div>
+                    <div class="stat-label">活躍帳號</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="boundAccounts">-</div>
+                    <div class="stat-label">已綁定</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="bindingRate">-</div>
+                    <div class="stat-label">綁定率</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 當前帳號狀態 -->
+        <div class="card">
+            <h2>🔐 當前帳號狀態</h2>
+            <div id="currentAccountStatus">
+                <div class="binding-status unbound" id="bindingStatus">
+                    <strong>⚠️ 尚未綁定 Authenticator</strong>
+                    <p style="margin-top: 5px; font-size: 13px;">
+                        建議立即綁定以提高帳號安全性
+                    </p>
+                </div>
+                <div style="margin-top: 15px;">
+                    <button class="btn" id="bindingBtn" onclick="startBinding()">
+                        🔗 立即綁定 Authenticator
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 帳號列表 -->
+    <div class="card">
+        <h2>👥 帳號管理</h2>
+        <div style="margin-bottom: 15px;">
+            <button class="btn" onclick="createNewAccount()">➕ 創建新帳號</button>
+            <button class="btn secondary" onclick="exportData()">📤 匯出數據</button>
+            <button class="btn danger" onclick="clearAllData()">🧹 清空數據</button>
+        </div>
+        <table class="data-table" id="accountsTable">
+            <thead>
+                <tr>
+                    <th>帳號</th>
+                    <th>描述</th>
+                    <th>創建時間</th>
+                    <th>最後登入</th>
+                    <th>登入次數</th>
+                    <th>狀態</th>
+                    <th>TOTP</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody id="accountsTableBody">
+                <tr>
+                    <td colspan="8" style="text-align: center; opacity: 0.7;">載入中...</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- 綁定記錄 -->
+    <div class="card">
+        <h2>🔗 TOTP 綁定記錄</h2>
+        <table class="data-table" id="bindingsTable">
+            <thead>
+                <tr>
+                    <th>帳號</th>
+                    <th>綁定時間</th>
+                    <th>最後使用</th>
+                    <th>設備資訊</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody id="bindingsTableBody">
+                <tr>
+                    <td colspan="5" style="text-align: center; opacity: 0.7;">載入中...</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- QR Code 彈窗 -->
+    <div class="qr-modal" id="qrModal">
+        <div class="qr-content">
+            <button class="close-btn" onclick="closeQRModal()">&times;</button>
+            <h3 style="margin-bottom: 15px;">🔐 綁定 Authenticator</h3>
+            <p style="margin-bottom: 15px; opacity: 0.9;">
+                使用 Authenticator App 掃描下方 QR Code
+            </p>
+            <div class="qr-container">
+                <img id="qrCodeImg" class="qr-code" src="" alt="QR Code">
+            </div>
+            <div style="font-size: 12px; opacity: 0.7; margin-bottom: 15px;">
+                手動輸入密鑰：<br>
+                <code id="secretKey" style="background: rgba(0,0,0,0.3); padding: 5px; border-radius: 4px;"></code>
+            </div>
+            <button class="btn" onclick="closeQRModal()">完成</button>
+        </div>
+    </div>
+
+    <script type="module" src="/src/manage.js"></script>
+</body>
+</html>

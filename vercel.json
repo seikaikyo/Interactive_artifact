@@ -1,5 +1,11 @@
 {
   "rewrites": [
+    { "source": "/login", "destination": "/login.html" },
+    { "source": "/login.html", "destination": "/login.html" },
+    { "source": "/setup", "destination": "/setup.html" },
+    { "source": "/setup.html", "destination": "/setup.html" },
+    { "source": "/manage", "destination": "/manage.html" },
+    { "source": "/manage.html", "destination": "/manage.html" },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
 }

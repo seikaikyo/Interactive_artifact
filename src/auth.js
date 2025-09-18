@@ -55,8 +55,7 @@ class AuthSystem {
                 hintElement.innerHTML = `
                     <div style="background: rgba(0, 212, 255, 0.1); border: 1px solid rgba(0, 212, 255, 0.3); color: #00d4ff; padding: 15px; border-radius: 8px; margin-top: 20px; font-size: 12px;">
                         <strong>💡 提示</strong><br>
-                        測試帳號：<code style="background: rgba(0, 212, 255, 0.2); padding: 2px 6px; border-radius: 4px;">${latestAccount.username}</code><br>
-                        密碼：<code style="background: rgba(0, 212, 255, 0.2); padding: 2px 6px; border-radius: 4px;">Ys@22466564</code>
+                        可用測試帳號：<code style="background: rgba(0, 212, 255, 0.2); padding: 2px 6px; border-radius: 4px;">${latestAccount.username}</code>
                     </div>
                 `;
             }
@@ -139,34 +138,35 @@ class AuthSystem {
         // 切換到TOTP驗證模式
         const container = document.querySelector('.login-container');
         container.innerHTML = `
-            <div class="logo">
-                <h1>🔐 雙重驗證</h1>
-                <p>請輸入 Authenticator 驗證碼</p>
+            <div style="margin-bottom: 30px;">
+                <h1 style="font-size: 24px; font-weight: 600; color: #e8f4ff; margin-bottom: 8px;">🔐 雙重驗證</h1>
+                <p style="font-size: 14px; opacity: 0.8; color: #00d4ff;">請輸入 Authenticator 驗證碼</p>
             </div>
 
             <form id="totpForm">
-                <div class="form-group">
-                    <label for="totpCode">Authenticator 驗證碼</label>
-                    <input type="text" id="totpCode" name="totpCode"
-                           placeholder="000 000" maxlength="7"
-                           style="text-align: center; font-size: 24px; letter-spacing: 8px; font-weight: 600;" required>
+                <div style="margin-bottom: 20px;">
+                    <label style="display: block; margin-bottom: 8px; font-weight: 500;">Authenticator 驗證碼</label>
+                    <input type="text" id="totpCode" name="totpCode" placeholder="000 000" maxlength="7" required
+                           style="width: 100%; padding: 12px 16px; border: 1px solid rgba(255, 255, 255, 0.3); border-radius: 8px; background: rgba(255, 255, 255, 0.1); color: white; font-size: 24px; text-align: center; letter-spacing: 8px; font-weight: 600;">
                     <small style="color: rgba(255,255,255,0.7); font-size: 12px; margin-top: 5px; display: block;">
                         打開您的 Authenticator App 查看6位數驗證碼
                     </small>
                 </div>
 
-                <button type="submit" class="login-btn" id="totpBtn">
+                <button type="submit" id="totpBtn"
+                        style="width: 100%; padding: 12px; background: rgba(76, 175, 80, 0.3); border: 1px solid rgba(76, 175, 80, 0.5); color: #4CAF50; border-radius: 8px; cursor: pointer; font-size: 16px; font-weight: 600; margin-bottom: 10px;">
                     🔐 驗證登入
                 </button>
 
-                <button type="button" class="login-btn" style="background: rgba(255,255,255,0.2); margin-top: 10px;" onclick="location.reload()">
+                <button type="button" onclick="location.reload()"
+                        style="width: 100%; padding: 12px; background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); color: white; border-radius: 8px; cursor: pointer; font-size: 16px;">
                     返回重新登入
                 </button>
 
-                <div class="error-message" id="errorMessage" style="display: none;"></div>
+                <div id="errorMessage" style="display: none; margin-top: 15px; padding: 10px; background: rgba(220, 53, 69, 0.1); border: 1px solid rgba(220, 53, 69, 0.3); color: #dc3545; border-radius: 8px;"></div>
             </form>
 
-            <div class="footer">
+            <div style="margin-top: 20px; font-size: 12px; opacity: 0.7;">
                 <p>帳號：${this.currentUser}</p>
             </div>
         `;

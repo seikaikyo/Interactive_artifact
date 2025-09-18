@@ -742,8 +742,50 @@ function loadManageFunctions() {
             updateAccountsList();
         };
 
-        window.bindTOTP = () => {
-            alert('TOTP 綁定功能將在下一版本中提供完整的 Authenticator App 整合。');
+        window.bindTOTP = async () => {
+            const authData = sessionStorage.getItem('factoryAuth');
+            if (!authData) {
+                alert('請先登入系統');
+                return;
+            }
+
+            const auth = JSON.parse(authData);
+            const currentUser = auth.username;
+
+            // 檢查是否已經綁定
+            if (accountManager.isAccountBound(currentUser)) {
+                if (confirm('您的帳號已綁定 TOTP，確定要解除綁定嗎？')) {
+                    const success = accountManager.unbindTOTP(currentUser);
+                    if (success) {
+                        alert('TOTP 綁定已解除');
+                        updateStats();
+                        updateCurrentStatus();
+                        updateAccountsList();
+                    }
+                }
+                return;
+            }
+
+            // 開始綁定流程
+            try {
+                // 動態載入 TOTP 模組
+                const totpModule = await import('./totp.js');
+                const FactoryTOTP = totpModule.FactoryTOTP;
+                const totp = new FactoryTOTP();
+
+                // 生成新的 TOTP 密鑰
+                const secret = totp.generateSecret();
+
+                // 生成 QR Code URL
+                const qrUrl = totp.generateQRCodeURL(secret, currentUser);
+
+                // 顯示綁定介面
+                showTOTPBindingModal(secret, qrUrl, currentUser, accountManager, totp, updateStats, updateCurrentStatus, updateAccountsList);
+
+            } catch (error) {
+                console.error('載入 TOTP 模組失敗:', error);
+                alert('載入 TOTP 功能失敗，請重試');
+            }
         };
 
         window.exportData = () => {
@@ -795,6 +837,133 @@ function loadManageFunctions() {
                 updateStats();
                 updateAccountsList();
             }
+        };
+
+        // TOTP 綁定介面
+        window.showTOTPBindingModal = (secret, qrUrl, username, accountManager, totp, updateStats, updateCurrentStatus, updateAccountsList) => {
+            // 創建模態框 HTML
+            const modalHtml = `
+                <div id="totpModal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center; z-index: 10000;">
+                    <div style="background: white; border-radius: 12px; padding: 30px; max-width: 500px; width: 90%; max-height: 90vh; overflow-y: auto; color: #333;">
+                        <h2 style="margin: 0 0 20px 0; color: #1e3c72; text-align: center;">🔗 綁定 Authenticator App</h2>
+
+                        <div style="text-align: center; margin-bottom: 20px;">
+                            <p style="margin: 10px 0; color: #666;">請使用 Google Authenticator 或其他 TOTP App 掃描此 QR Code：</p>
+                            <div id="qrcode" style="margin: 20px 0; display: flex; justify-content: center;"></div>
+                        </div>
+
+                        <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin: 20px 0;">
+                            <p style="margin: 0 0 10px 0; font-weight: bold; color: #333;">手動輸入密鑰（如無法掃描 QR Code）：</p>
+                            <code style="background: #e9ecef; padding: 8px; border-radius: 4px; display: block; word-break: break-all; font-family: monospace;">${secret}</code>
+                        </div>
+
+                        <div style="margin: 20px 0;">
+                            <label style="display: block; margin-bottom: 8px; font-weight: bold; color: #333;">請輸入 App 中顯示的 6 位數驗證碼：</label>
+                            <input type="text" id="totpVerificationCode" maxlength="6" style="width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 6px; font-size: 18px; text-align: center; letter-spacing: 2px;" placeholder="000000">
+                        </div>
+
+                        <div style="display: flex; gap: 10px; justify-content: center; margin-top: 25px;">
+                            <button onclick="verifyTOTPBinding('${secret}', '${username}')" style="background: #28a745; color: white; border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; font-weight: bold;">✅ 驗證並綁定</button>
+                            <button onclick="closeTOTPModal()" style="background: #6c757d; color: white; border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer;">❌ 取消</button>
+                        </div>
+
+                        <div id="totpVerificationStatus" style="margin-top: 15px; text-align: center; font-weight: bold;"></div>
+                    </div>
+                </div>
+            `;
+
+            // 添加模態框到頁面
+            document.body.insertAdjacentHTML('beforeend', modalHtml);
+
+            // 生成 QR Code
+            try {
+                const qrCodeElement = document.getElementById('qrcode');
+                // 使用 totp.js 中的 generateQRCodeURL 方法生成的 URL
+                const img = document.createElement('img');
+                img.src = qrUrl;
+                img.alt = 'TOTP QR Code';
+                img.style.width = '200px';
+                img.style.height = '200px';
+                img.style.border = '2px solid #ddd';
+                img.style.borderRadius = '8px';
+
+                img.onload = () => {
+                    qrCodeElement.appendChild(img);
+                };
+
+                img.onerror = () => {
+                    console.error('QR Code 載入失敗');
+                    qrCodeElement.innerHTML = '<p style="color: #dc3545;">QR Code 載入失敗，請使用手動輸入方式</p>';
+                };
+            } catch (error) {
+                console.error('生成 QR Code 失敗:', error);
+                document.getElementById('qrcode').innerHTML = '<p style="color: #dc3545;">請使用手動輸入方式</p>';
+            }
+
+            // 綁定驗證函數
+            window.verifyTOTPBinding = async (secret, username) => {
+                const code = document.getElementById('totpVerificationCode').value.trim();
+                const statusDiv = document.getElementById('totpVerificationStatus');
+
+                if (!code || code.length !== 6) {
+                    statusDiv.innerHTML = '<span style="color: #dc3545;">請輸入 6 位數驗證碼</span>';
+                    return;
+                }
+
+                try {
+                    // 驗證 TOTP 碼
+                    const isValid = await totp.verifyTOTP(secret, code);
+
+                    if (isValid) {
+                        // 綁定成功
+                        const success = accountManager.bindTOTP(username, secret);
+                        if (success) {
+                            statusDiv.innerHTML = '<span style="color: #28a745;">✅ 綁定成功！</span>';
+                            setTimeout(() => {
+                                closeTOTPModal();
+                                updateStats();
+                                updateCurrentStatus();
+                                updateAccountsList();
+                                alert('TOTP 綁定成功！請妥善保管您的 Authenticator App');
+                            }, 1500);
+                        } else {
+                            statusDiv.innerHTML = '<span style="color: #dc3545;">綁定失敗，請重試</span>';
+                        }
+                    } else {
+                        statusDiv.innerHTML = '<span style="color: #dc3545;">驗證碼錯誤，請重試</span>';
+                    }
+                } catch (error) {
+                    console.error('驗證 TOTP 失敗:', error);
+                    statusDiv.innerHTML = '<span style="color: #dc3545;">驗證失敗，請重試</span>';
+                }
+            };
+
+            // 關閉模態框函數
+            window.closeTOTPModal = () => {
+                const modal = document.getElementById('totpModal');
+                if (modal) {
+                    modal.remove();
+                }
+                // 清理全局函數
+                delete window.verifyTOTPBinding;
+                delete window.closeTOTPModal;
+            };
+
+            // 點擊背景關閉模態框
+            document.getElementById('totpModal').addEventListener('click', (e) => {
+                if (e.target.id === 'totpModal') {
+                    closeTOTPModal();
+                }
+            });
+
+            // ESC 鍵關閉模態框
+            const handleEscape = (e) => {
+                if (e.key === 'Escape') {
+                    closeTOTPModal();
+                    document.removeEventListener('keydown', handleEscape);
+                }
+            };
+            document.addEventListener('keydown', handleEscape);
         };
 
         // 初始載入數據

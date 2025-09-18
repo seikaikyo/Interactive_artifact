@@ -1,10 +1,16 @@
 {
-  "rewrites": [
-    { "source": "/login", "destination": "/login.html" },
-    { "source": "/setup", "destination": "/setup.html" },
-    { "source": "/manage", "destination": "/manage.html" },
-    { "source": "/reset", "destination": "/reset.html" },
-    { "source": "/test", "destination": "/quick_test.html" },
-    { "source": "/", "destination": "/index.html" }
+  "routes": [
+    { "src": "/login", "dest": "/login.html" },
+    { "src": "/setup", "dest": "/setup.html" },
+    { "src": "/manage", "dest": "/manage.html" },
+    { "src": "/reset", "dest": "/reset.html" },
+    { "src": "/test", "dest": "/quick_test.html" },
+    { "src": "/login\\.html", "dest": "/login.html" },
+    { "src": "/setup\\.html", "dest": "/setup.html" },
+    { "src": "/manage\\.html", "dest": "/manage.html" },
+    { "src": "/reset\\.html", "dest": "/reset.html" },
+    { "src": "/quick_test\\.html", "dest": "/quick_test.html" },
+    { "src": "/", "dest": "/index.html" },
+    { "src": "/(.*)", "dest": "/index.html" }
   ]
 }

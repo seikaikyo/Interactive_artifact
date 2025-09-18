@@ -1,9 +1,4 @@
 {
-  "functions": {
-    "src/**": {
-      "maxDuration": 10
-    }
-  },
   "rewrites": [
     { "source": "/login", "destination": "/login.html" },
     { "source": "/setup", "destination": "/setup.html" },

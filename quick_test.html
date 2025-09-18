@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>快速測試頁面</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; background: #f0f0f0; }
+        .link { display: block; margin: 10px 0; padding: 10px; background: white; border-radius: 5px; text-decoration: none; color: #333; }
+        .link:hover { background: #e0e0e0; }
+    </style>
+</head>
+<body>
+    <h1>🔗 快速測試導航</h1>
+    <p>點擊下面的鏈接測試各個頁面是否可以正常訪問：</p>
+
+    <a href="/login.html" class="link">🔐 登入頁面 (/login.html)</a>
+    <a href="/manage.html" class="link">👥 管理頁面 (/manage.html)</a>
+    <a href="/setup.html" class="link">⚙️ 設置頁面 (/setup.html)</a>
+    <a href="/reset.html" class="link">🔧 重置頁面 (/reset.html)</a>
+    <a href="/" class="link">🏠 主頁面 (/)</a>
+
+    <hr>
+
+    <h2>🌐 完整 URL 測試</h2>
+    <p>如果上面的相對鏈接不工作，請嘗試完整 URL：</p>
+
+    <a href="https://wise-iot-factory-dashboard.vercel.app/login.html" class="link" target="_blank">
+        🔐 登入頁面 (完整 URL)
+    </a>
+    <a href="https://wise-iot-factory-dashboard.vercel.app/manage.html" class="link" target="_blank">
+        👥 管理頁面 (完整 URL)
+    </a>
+    <a href="https://wise-iot-factory-dashboard.vercel.app/reset.html" class="link" target="_blank">
+        🔧 重置頁面 (完整 URL)
+    </a>
+
+    <hr>
+
+    <h2>📋 測試步驟</h2>
+    <ol>
+        <li>先嘗試「重置頁面」清理數據</li>
+        <li>然後使用「管理頁面」創建帳號</li>
+        <li>最後使用「登入頁面」測試登入</li>
+    </ol>
+
+    <div style="background: yellow; padding: 10px; margin: 20px 0; border-radius: 5px;">
+        <strong>🚨 如果點擊任何鏈接都沒反應，請直接在瀏覽器地址欄輸入完整 URL</strong>
+    </div>
+</body>
+</html>

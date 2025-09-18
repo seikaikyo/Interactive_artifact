@@ -4,6 +4,7 @@
     { "source": "/setup", "destination": "/setup.html" },
     { "source": "/manage", "destination": "/manage.html" },
     { "source": "/reset", "destination": "/reset.html" },
-    { "source": "/(.*)", "destination": "/index.html" }
+    { "source": "/test", "destination": "/quick_test.html" },
+    { "source": "/", "destination": "/index.html" }
   ]
 }

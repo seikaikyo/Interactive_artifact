@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Auth Test</title>
+</head>
+<body>
+    <h1>認證測試頁面</h1>
+
+    <div>
+        <h3>當前 localStorage:</h3>
+        <pre id="localStorage"></pre>
+    </div>
+
+    <div>
+        <h3>當前 sessionStorage:</h3>
+        <pre id="sessionStorage"></pre>
+    </div>
+
+    <button onclick="clearStorage()">清除所有儲存</button>
+    <button onclick="createTestAccount()">創建測試帳號</button>
+    <button onclick="testLogin()">測試登入</button>
+
+    <script type="module">
+        import AccountManager from './src/accounts.js';
+
+        function updateDisplay() {
+            document.getElementById('localStorage').textContent = JSON.stringify(localStorage, null, 2);
+            document.getElementById('sessionStorage').textContent = JSON.stringify(sessionStorage, null, 2);
+        }
+
+        window.clearStorage = () => {
+            localStorage.clear();
+            sessionStorage.clear();
+            updateDisplay();
+            console.log('Storage cleared');
+        };
+
+        window.createTestAccount = () => {
+            const accountManager = new AccountManager();
+            accountManager.initialize();
+
+            if (accountManager.accounts.length === 0) {
+                const account = accountManager.createFirstAdminAccount();
+                console.log('Created test account:', account);
+                alert(`測試帳號已創建!\n帳號: ${account.username}\n密碼: ${accountManager.FIXED_PASSWORD}`);
+            } else {
+                alert('已有帳號存在');
+            }
+            updateDisplay();
+        };
+
+        window.testLogin = () => {
+            const accountManager = new AccountManager();
+            accountManager.initialize();
+
+            if (accountManager.accounts.length > 0) {
+                const account = accountManager.accounts[0];
+                console.log('Testing login with:', account.username);
+
+                // 模擬登入成功
+                const authData = {
+                    authenticated: true,
+                    username: account.username,
+                    loginTime: Date.now(),
+                    expires: Date.now() + (8 * 3600 * 1000)
+                };
+
+                sessionStorage.setItem('factoryAuth', JSON.stringify(authData));
+                console.log('Login test complete');
+                updateDisplay();
+            } else {
+                alert('請先創建測試帳號');
+            }
+        };
+
+        updateDisplay();
+    </script>
+</body>
+</html>

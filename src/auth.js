@@ -219,9 +219,13 @@ class AuthSystem {
 
     loginSuccess() {
         this.setAuthSession();
-        this.showSuccess('🎉 登入成功！正在跳轉...', () => {
-            window.location.href = '/';
-        });
+
+        // 確保 sessionStorage 資料已設置完成再跳轉
+        setTimeout(() => {
+            this.showSuccess('🎉 登入成功！正在跳轉...', () => {
+                window.location.href = '/';
+            });
+        }, 100);
     }
 
 

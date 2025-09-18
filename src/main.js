@@ -6,31 +6,46 @@ import AIComponents from './ai-components.js';
 // 檢查認證狀態
 function checkAuthentication() {
     try {
+        console.log('🔍 檢查認證狀態...');
         const authData = sessionStorage.getItem('factoryAuth');
+
         if (!authData) {
+            console.log('❌ 無認證資料，跳轉登入頁面');
             window.location.href = '/login.html';
             return false;
         }
 
         const auth = JSON.parse(authData);
+        console.log('📋 認證資料:', {
+            authenticated: auth.authenticated,
+            username: auth.username,
+            expires: new Date(auth.expires).toLocaleString(),
+            isExpired: Date.now() > auth.expires
+        });
+
         if (Date.now() > auth.expires || !auth.authenticated) {
+            console.log('❌ 認證已過期或無效，清除並跳轉');
             sessionStorage.removeItem('factoryAuth');
             window.location.href = '/login.html';
             return false;
         }
 
+        console.log('✅ 認證有效，允許訪問');
         return true;
     } catch (error) {
+        console.error('❌ 認證檢查錯誤:', error);
         window.location.href = '/login.html';
         return false;
     }
 }
 
-// 執行認證檢查
-if (!checkAuthentication()) {
-    // 如果認證失敗，停止後續執行
-    throw new Error('Authentication required');
-}
+// 延遲執行認證檢查，避免在頁面載入時立即執行
+setTimeout(() => {
+    if (!checkAuthentication()) {
+        // 如果認證失敗，停止後續執行
+        throw new Error('Authentication required');
+    }
+}, 50);
 
 // 將 HTML 內容插入到 app div
 document.querySelector('#app').innerHTML = `

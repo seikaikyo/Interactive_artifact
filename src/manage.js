@@ -6,6 +6,14 @@ class ManageInterface {
     constructor() {
         this.accountManager = new AccountManager();
         this.totp = new FactoryTOTP();
+        this.accountManager.initialize();
+
+        // 檢查是否需要創建首個管理員帳號
+        if (this.accountManager.accounts.length === 0) {
+            this.showFirstSetup();
+            return;
+        }
+
         this.currentUser = this.getCurrentUser();
 
         if (!this.currentUser) {
@@ -15,6 +23,50 @@ class ManageInterface {
         }
 
         this.init();
+    }
+
+    showFirstSetup() {
+        // 顯示首次設置界面
+        document.body.innerHTML = `
+            <div style="font-family: 'Microsoft JhengHei', Arial, sans-serif; background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); color: white; min-height: 100vh; display: flex; align-items: center; justify-content: center;">
+                <div style="background: rgba(255, 255, 255, 0.1); border-radius: 20px; padding: 40px; backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.2); box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3); width: 100%; max-width: 500px; text-align: center;">
+                    <div style="margin-bottom: 30px;">
+                        <h1 style="font-size: 24px; font-weight: 600; color: #e8f4ff; margin-bottom: 8px;">🔐 系統初始化</h1>
+                        <p style="font-size: 14px; opacity: 0.8; color: #00d4ff;">創建第一個管理員帳號</p>
+                    </div>
+
+                    <div style="background: rgba(255,193,7,0.1); border: 1px solid rgba(255,193,7,0.3); color: #ffc107; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+                        <strong>⚠️ 重要提醒</strong><br>
+                        系統尚未設置管理員帳號。<br>
+                        點擊下方按鈕將創建第一個管理員帳號。
+                    </div>
+
+                    <button id="createFirstAdmin" style="background: rgba(76, 175, 80, 0.3); border: 1px solid rgba(76, 175, 80, 0.5); color: #4CAF50; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-size: 16px; width: 100%; margin-bottom: 15px;">
+                        🆕 創建第一個管理員帳號
+                    </button>
+
+                    <div style="font-size: 12px; opacity: 0.7; margin-top: 15px;">
+                        創建後請妥善保管帳號資訊
+                    </div>
+                </div>
+            </div>
+        `;
+
+        document.getElementById('createFirstAdmin').addEventListener('click', () => {
+            try {
+                const account = this.accountManager.createFirstAdminAccount();
+                alert(`✅ 管理員帳號創建成功！
+
+帳號：${account.username}
+密碼：${this.accountManager.FIXED_PASSWORD}
+
+請妥善保管此資訊，現在將跳轉到登入頁面。`);
+
+                window.location.href = '/login.html';
+            } catch (error) {
+                alert(`創建失敗：${error.message}`);
+            }
+        });
     }
 
     init() {

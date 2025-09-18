@@ -17,8 +17,16 @@ class ManageInterface {
         this.currentUser = this.getCurrentUser();
 
         if (!this.currentUser) {
-            alert('未登入或會話已過期，請重新登入');
-            window.location.href = '/login.html';
+            // 不自動跳轉，顯示錯誤訊息
+            document.body.innerHTML = `
+                <div style="font-family: 'Microsoft JhengHei', Arial, sans-serif; background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); color: white; min-height: 100vh; display: flex; align-items: center; justify-content: center;">
+                    <div style="text-align: center; background: rgba(255, 255, 255, 0.1); padding: 40px; border-radius: 20px; backdrop-filter: blur(20px);">
+                        <h1>🔐 需要登入</h1>
+                        <p style="margin: 20px 0;">請先登入系統以訪問管理介面</p>
+                        <a href="/login.html" style="display: inline-block; padding: 12px 24px; background: rgba(0, 212, 255, 0.3); color: #00d4ff; text-decoration: none; border-radius: 8px; border: 1px solid rgba(0, 212, 255, 0.5);">前往登入</a>
+                    </div>
+                </div>
+            `;
             return;
         }
 

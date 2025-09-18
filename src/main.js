@@ -3,15 +3,14 @@ import './style.css';
 import AIEngine from './ai-engine.js';
 import AIComponents from './ai-components.js';
 
-// 檢查認證狀態
+// 檢查認證狀態（僅檢查，不自動跳轉）
 function checkAuthentication() {
     try {
         console.log('🔍 檢查認證狀態...');
         const authData = sessionStorage.getItem('factoryAuth');
 
         if (!authData) {
-            console.log('❌ 無認證資料，跳轉登入頁面');
-            window.location.href = '/login.html';
+            console.log('❌ 無認證資料');
             return false;
         }
 
@@ -24,31 +23,36 @@ function checkAuthentication() {
         });
 
         if (Date.now() > auth.expires || !auth.authenticated) {
-            console.log('❌ 認證已過期或無效，清除並跳轉');
+            console.log('❌ 認證已過期或無效');
             sessionStorage.removeItem('factoryAuth');
-            window.location.href = '/login.html';
             return false;
         }
 
-        console.log('✅ 認證有效，允許訪問');
+        console.log('✅ 認證有效');
         return true;
     } catch (error) {
         console.error('❌ 認證檢查錯誤:', error);
-        window.location.href = '/login.html';
         return false;
     }
 }
 
-// 延遲執行認證檢查，避免在頁面載入時立即執行
-setTimeout(() => {
-    if (!checkAuthentication()) {
-        // 如果認證失敗，停止後續執行
-        throw new Error('Authentication required');
-    }
-}, 50);
+// 檢查認證但不強制跳轉
+if (!checkAuthentication()) {
+    // 顯示未認證提示，但不自動跳轉
+    document.querySelector('#app').innerHTML = `
+        <div style="display: flex; align-items: center; justify-content: center; min-height: 100vh; background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); color: white; font-family: 'Microsoft JhengHei', Arial, sans-serif;">
+            <div style="text-align: center; background: rgba(255, 255, 255, 0.1); padding: 40px; border-radius: 20px; backdrop-filter: blur(20px);">
+                <h1>🔐 需要登入</h1>
+                <p style="margin: 20px 0;">請先登入系統以訪問儀表板</p>
+                <a href="/login.html" style="display: inline-block; padding: 12px 24px; background: rgba(0, 212, 255, 0.3); color: #00d4ff; text-decoration: none; border-radius: 8px; border: 1px solid rgba(0, 212, 255, 0.5);">前往登入</a>
+            </div>
+        </div>
+    `;
+} else {
+    console.log('✅ 用戶已認證，載入儀表板');
 
-// 將 HTML 內容插入到 app div
-document.querySelector('#app').innerHTML = `
+    // 將 HTML 內容插入到 app div
+    document.querySelector('#app').innerHTML = `
     <div class="header">
         <h1>鈺祥企業柳營再生戰情中心 - WISE-IOT Dashboard</h1>
         <div class="header-right">
@@ -483,10 +487,12 @@ setTimeout(() => {
 
 }, 2000); // 等待2秒確保所有圖表載入完成
 
-// 登出功能
-document.getElementById('logoutBtn').addEventListener('click', () => {
-    if (confirm('確定要登出系統嗎？')) {
-        sessionStorage.removeItem('factoryAuth');
-        window.location.href = '/login.html';
-    }
-});
+    // 登出功能
+    document.getElementById('logoutBtn').addEventListener('click', () => {
+        if (confirm('確定要登出系統嗎？')) {
+            sessionStorage.removeItem('factoryAuth');
+            window.location.href = '/login.html';
+        }
+    });
+
+} // 結束認證通過的區塊

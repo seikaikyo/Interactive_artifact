@@ -534,7 +534,7 @@ setTimeout(() => {
 function loadLoginPage() {
     document.querySelector('#app').innerHTML = `
         <div style="font-family: 'Microsoft JhengHei', Arial, sans-serif; background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); color: white; min-height: 100vh; display: flex; align-items: center; justify-content: center;">
-            <div style="background: rgba(255, 255, 255, 0.1); border-radius: 20px; padding: 40px; backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.2); box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3); width: 100%; max-width: 400px; text-align: center;">
+            <div class="login-container" style="background: rgba(255, 255, 255, 0.1); border-radius: 20px; padding: 40px; backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.2); box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3); width: 100%; max-width: 400px; text-align: center;">
                 <div style="margin-bottom: 30px;">
                     <h1 style="font-size: 24px; font-weight: 600; color: #e8f4ff; margin-bottom: 8px;">🔐 系統登入</h1>
                     <p style="font-size: 14px; opacity: 0.8; color: #00d4ff;">輸入授權帳號密碼</p>

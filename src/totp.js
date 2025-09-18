@@ -103,18 +103,31 @@ class TOTP {
 
     // 驗證 TOTP 代碼（允許前後1個時間窗口的誤差）
     async verifyTOTP(secret, token, timestamp = null) {
+        console.log('🔍 開始 TOTP 驗證流程');
+        console.log('密鑰:', secret);
+        console.log('輸入代碼:', token, '(類型:', typeof token, ')');
+
         const currentTime = timestamp || Math.floor(Date.now() / 1000);
+        console.log('當前時間戳:', currentTime);
+
+        // 確保 token 是字符串並去除空格
+        const cleanToken = String(token).replace(/\s/g, '');
+        console.log('清理後的代碼:', cleanToken);
 
         // 檢查當前時間窗口和前後各一個窗口
         for (let i = -1; i <= 1; i++) {
             const testTime = currentTime + (i * this.window);
             const expectedToken = await this.generateTOTP(secret, testTime);
 
-            if (expectedToken === token) {
+            console.log(`時間窗口 ${i}: 期望代碼 = ${expectedToken}, 輸入代碼 = ${cleanToken}`);
+
+            if (expectedToken && expectedToken === cleanToken) {
+                console.log('✅ TOTP 驗證成功！');
                 return true;
             }
         }
 
+        console.log('❌ TOTP 驗證失敗');
         return false;
     }
 

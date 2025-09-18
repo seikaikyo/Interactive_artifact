@@ -221,11 +221,15 @@ class AuthSystem {
         try {
             const secret = this.accountManager.getTOTPSecret(this.currentUser);
             console.log('獲取到的密鑰:', secret ? '✓' : '✗');
+            console.log('當前用戶:', this.currentUser);
+            console.log('輸入的驗證碼:', code);
 
             if (!secret) {
-                throw new Error('無法獲取TOTP密鑰');
+                console.error('無法獲取TOTP密鑰 - 用戶:', this.currentUser);
+                throw new Error('無法獲取TOTP密鑰，請聯繫管理員');
             }
 
+            console.log('開始驗證TOTP...');
             const isValid = await this.totp.verifyTOTP(secret, code);
             console.log('TOTP驗證結果:', isValid);
 
@@ -243,7 +247,8 @@ class AuthSystem {
             }
         } catch (error) {
             console.error('TOTP 驗證錯誤:', error);
-            this.showError('驗證過程發生錯誤，請重試');
+            console.error('錯誤堆疊:', error.stack);
+            this.showError(`驗證過程發生錯誤：${error.message}`);
         }
 
         this.hideLoading();

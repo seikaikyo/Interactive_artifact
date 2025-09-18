@@ -561,6 +561,7 @@ function loadLoginPage() {
                     <div id="errorMessage" style="display: none; margin-top: 15px; padding: 10px; background: rgba(220, 53, 69, 0.1); border: 1px solid rgba(220, 53, 69, 0.3); color: #dc3545; border-radius: 8px;"></div>
                 </form>
 
+                <div class="login-hint"></div>
                 <div style="margin-top: 20px;">
                     <button onclick="window.location.href='/'" style="background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); color: white; padding: 8px 16px; border-radius: 6px; cursor: pointer;">← 返回首頁</button>
                 </div>

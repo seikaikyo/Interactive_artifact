@@ -18,16 +18,48 @@ class AuthSystem {
         // 初始化帳號管理器
         this.accountManager.initialize();
 
-        // 檢查是否有任何帳號
+        // 檢查是否有任何帳號（如果沒有會自動創建一個）
         if (this.accountManager.accounts.length === 0) {
-            this.showNoAccountsMessage();
+            console.log('🔧 創建測試帳號中...');
+            // 等待一下讓自動創建完成
+            setTimeout(() => {
+                if (this.accountManager.accounts.length === 0) {
+                    this.showNoAccountsMessage();
+                    return;
+                }
+                this.setupLoginForm();
+            }, 100);
             return;
         }
 
+        this.setupLoginForm();
+    }
+
+    setupLoginForm() {
         const form = document.getElementById('loginForm');
 
         if (form) {
             form.addEventListener('submit', this.handleLogin.bind(this));
+        }
+
+        // 顯示可用帳號提示（僅在開發環境或有需要時）
+        this.showAvailableAccountHint();
+    }
+
+    showAvailableAccountHint() {
+        if (this.accountManager.accounts.length > 0) {
+            const latestAccount = this.accountManager.accounts[this.accountManager.accounts.length - 1];
+            const hintElement = document.querySelector('.login-hint');
+
+            if (hintElement) {
+                hintElement.innerHTML = `
+                    <div style="background: rgba(0, 212, 255, 0.1); border: 1px solid rgba(0, 212, 255, 0.3); color: #00d4ff; padding: 15px; border-radius: 8px; margin-top: 20px; font-size: 12px;">
+                        <strong>💡 提示</strong><br>
+                        測試帳號：<code style="background: rgba(0, 212, 255, 0.2); padding: 2px 6px; border-radius: 4px;">${latestAccount.username}</code><br>
+                        密碼：<code style="background: rgba(0, 212, 255, 0.2); padding: 2px 6px; border-radius: 4px;">Ys@22466564</code>
+                    </div>
+                `;
+            }
         }
     }
 

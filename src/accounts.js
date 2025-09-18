@@ -267,7 +267,11 @@ class AccountManager {
 
     // 初始化（僅載入現有帳號，不自動創建）
     initialize() {
-        // 只載入現有帳號，不自動創建
+        // 如果沒有任何帳號，自動創建一個預設測試帳號
+        if (this.accounts.length === 0) {
+            console.log('🔧 偵測到無帳號，自動創建測試帳號...');
+            this.createAccount('自動創建的測試帳號');
+        }
         console.log(`📋 系統載入完成，目前有 ${this.accounts.length} 個帳號`);
         return null;
     }
